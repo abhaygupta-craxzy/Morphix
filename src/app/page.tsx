@@ -1,41 +1,49 @@
-import Navbar               from "@/components/landing/Navbar";
-import HeroSection           from "@/components/landing/HeroSection";
-import MarqueeSection        from "@/components/landing/MarqueeSection";
-import CapabilitiesSection   from "@/components/landing/CapabilitiesSection";
-import DesignDNASection      from "@/components/landing/DesignDNASection";
-import ComponentLibrarySection from "@/components/landing/ComponentLibrarySection";
-import StyleMarketplace      from "@/components/landing/StyleMarketplace";
-import TrustSection          from "@/components/landing/TrustSection";
-import CTASection            from "@/components/landing/CTASection";
-import Footer                from "@/components/landing/Footer";
+import Navbar                       from "@/components/landing/Navbar";
+import HeroSection                   from "@/components/landing/HeroSection";
+import ChooseStartingPoint           from "@/components/landing/ChooseStartingPoint";
+import LiveTransformationWall        from "@/components/landing/LiveTransformationWall";
+import WebsiteTransformationShowcase from "@/components/landing/WebsiteTransformationShowcase";
+import DesignDNASection              from "@/components/landing/DesignDNASection";
+import ComponentIntelligenceSection  from "@/components/landing/ComponentIntelligenceSection";
+import ComponentLibrarySection      from "@/components/landing/ComponentLibrarySection";
+import StyleMarketplace              from "@/components/landing/StyleMarketplace";
+import TrustSection                  from "@/components/landing/TrustSection";
+import CTASection                    from "@/components/landing/CTASection";
+import Footer                        from "@/components/landing/Footer";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-[#07070f]">
+    <div className="flex flex-col min-h-screen bg-[#070B14]">
       <Navbar />
       <main className="flex-1">
-        {/* 1. Dark hero with floating elements + workspace */}
+        {/* 1. Dark hero — workspace dominant (30% text / 70% product) */}
         <HeroSection />
 
-        {/* 2. Scrolling transformation marquee */}
-        <MarqueeSection />
+        {/* 2. Light — Choose your starting point (3 premium entry cards) */}
+        <ChooseStartingPoint />
 
-        {/* 3. Interactive bento capabilities (colorful) */}
-        <CapabilitiesSection />
+        {/* 3. Dark — Live Transformation Wall (signature section) */}
+        <LiveTransformationWall />
 
-        {/* 4. Design DNA (dark purple section) */}
+        {/* 4. Light — Website Transformation Showcase (before/after slider) */}
+        <WebsiteTransformationShowcase />
+
+        {/* 5. Dark — Design DNA Engine */}
         <DesignDNASection />
 
-        {/* 5. Component library browser */}
+        {/* 6. Light — Component Intelligence Engine (6 scrolling columns + theme sandbox) */}
+        <ComponentIntelligenceSection />
+
+        {/* 7. Light — Component Library Browser */}
         <ComponentLibrarySection />
 
-        {/* 6. Style marketplace (click to preview) */}
+        {/* 8. Light — Style Marketplace (click any style to preview) */}
         <StyleMarketplace />
 
-        {/* 7. Trust / stats (dark section with counters) */}
+        {/* 9. Dark — Trust / Stats counters */}
         <TrustSection />
 
-        {/* 8. Final CTA (dark gradient with workspace prompt) */}
+        {/* 10. Light — Final CTA workspace prompt */}
         <CTASection />
       </main>
       <Footer />

@@ -39,6 +39,14 @@
   --radius-xl: calc(var(--radius) * 1.4);
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
+
+  --color-brand-primary: #5B7FFF;
+  --color-brand-secondary: #7C5CFF;
+  --color-brand-accent: #14B8A6;
+  --color-brand-light-bg: #FAFBFC;
+  --color-brand-light-surf: #F5F7FA;
+  --color-brand-dark-bg: #070B14;
+  --color-brand-dark-elev: #111827;
 }
 
 :root {
@@ -218,6 +226,8 @@
 @keyframes border-glow  { 0%,100%{border-color:rgba(99,102,241,0.3)} 50%{border-color:rgba(168,85,247,0.6)} }
 @keyframes move-up      { 0%{transform:translateY(30px);opacity:0} 100%{transform:translateY(0);opacity:1} }
 @keyframes ping-slow    { 75%,100%{transform:scale(1.8);opacity:0} }
+@keyframes marquee-y-u  { from{transform:translateY(0)} to{transform:translateY(-50%)} }
+@keyframes marquee-y-d  { from{transform:translateY(-50%)} to{transform:translateY(0)} }
 
 /* Animation utilities */
 .animate-float-slow   { animation: float-slow 6s ease-in-out infinite; }
@@ -233,6 +243,12 @@
 .animate-marquee-l    { animation: marquee-l 30s linear infinite; }
 .animate-marquee-r    { animation: marquee-r 25s linear infinite; }
 .animate-marquee-l-fast { animation: marquee-l 18s linear infinite; }
+.animate-marquee-y-u-slow { animation: marquee-y-u 50s linear infinite; }
+.animate-marquee-y-u-med  { animation: marquee-y-u 35s linear infinite; }
+.animate-marquee-y-u-fast { animation: marquee-y-u 22s linear infinite; }
+.animate-marquee-y-d-slow { animation: marquee-y-d 50s linear infinite; }
+.animate-marquee-y-d-med  { animation: marquee-y-d 35s linear infinite; }
+.animate-marquee-y-d-fast { animation: marquee-y-d 22s linear infinite; }
 .animate-slide-in-up  { animation: slide-in-up 0.55s cubic-bezier(0.16,1,0.3,1) forwards; }
 .animate-slide-in-l   { animation: slide-in-l 0.55s cubic-bezier(0.16,1,0.3,1) forwards; }
 .animate-slide-in-r   { animation: slide-in-r 0.55s cubic-bezier(0.16,1,0.3,1) forwards; }
