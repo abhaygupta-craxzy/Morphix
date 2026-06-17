@@ -1137,7 +1137,7 @@ function BlueprintBackground() {
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full pointer-events-none select-none z-0"
-        style={{ opacity: 0.9 }}
+        style={{ opacity: 0.45 }}
       />
     </div>
   );

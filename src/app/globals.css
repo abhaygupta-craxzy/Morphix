@@ -40,13 +40,15 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
 
-  --color-brand-primary: #5B7FFF;
-  --color-brand-secondary: #7C5CFF;
-  --color-brand-accent: #14B8A6;
-  --color-brand-light-bg: #FAFBFC;
-  --color-brand-light-surf: #F5F7FA;
-  --color-brand-dark-bg: #070B14;
-  --color-brand-dark-elev: #111827;
+  --color-brand-primary: #6366F1;
+  --color-brand-secondary: #8B5CF6;
+  --color-brand-accent: #06B6D4;
+  --color-brand-emerald: #10B981;
+  --color-brand-light-bg: #F9FAFB;
+  --color-brand-light-surf: #F3F4F8;
+  --color-brand-dark-bg: #07070F;
+  --color-brand-dark-elev: #0F1117;
+  --color-brand-dark-card: #141420;
 }
 
 :root {
@@ -108,6 +110,14 @@
   background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 60%, #a5f3fc 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
+.gradient-text-violet {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.gradient-text-premium {
+  background: linear-gradient(135deg, #e0e7ff 0%, #c4b5fd 40%, #93c5fd 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
 
 /* ═══════════════════════════════════════
    BACKGROUNDS
@@ -119,9 +129,10 @@
               #07070f;
 }
 .section-dark-purple {
-  background: radial-gradient(ellipse 60% 50% at 30% 50%, rgba(139,92,246,0.15) 0%, transparent 60%),
-              radial-gradient(ellipse 40% 40% at 80% 30%, rgba(99,102,241,0.10) 0%, transparent 50%),
-              #0d0d1f;
+  background: radial-gradient(ellipse 60% 50% at 30% 50%, rgba(139,92,246,0.18) 0%, transparent 60%),
+              radial-gradient(ellipse 40% 40% at 80% 30%, rgba(99,102,241,0.12) 0%, transparent 50%),
+              radial-gradient(ellipse 30% 40% at 60% 80%, rgba(168,85,247,0.10) 0%, transparent 50%),
+              #0a0a1a;
 }
 .section-dark-teal {
   background: radial-gradient(ellipse 60% 50% at 20% 60%, rgba(20,184,166,0.18) 0%, transparent 60%),
@@ -131,35 +142,82 @@
 .section-vivid {
   background: linear-gradient(135deg, #1a0533 0%, #0f1445 40%, #0a1f3d 100%);
 }
+/* Section rhythm backgrounds */
+.section-light-pure {
+  background: #ffffff;
+}
+.section-light-soft {
+  background: linear-gradient(180deg, #f9fafb 0%, #ffffff 100%);
+}
+.section-light-airy {
+  background: linear-gradient(135deg, #fafbff 0%, #f5f3ff 50%, #fafbff 100%);
+}
+.section-cta-gradient {
+  background: linear-gradient(135deg, #0f0f1f 0%, #1a1040 40%, #0d1835 70%, #0f0f1f 100%);
+}
 .dot-grid {
-  background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.08) 1px, transparent 0);
+  background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.07) 1px, transparent 0);
   background-size: 28px 28px;
 }
 .dot-grid-light {
-  background-image: radial-gradient(circle at 1px 1px, #e2e8f0 1px, transparent 0);
+  background-image: radial-gradient(circle at 1px 1px, rgba(99,102,241,0.08) 1px, transparent 0);
   background-size: 28px 28px;
+}
+.dot-grid-subtle {
+  background-image: radial-gradient(circle at 1px 1px, #e8eaf0 1px, transparent 0);
+  background-size: 32px 32px;
 }
 
 /* ═══════════════════════════════════════
    CARD SYSTEM
 ═══════════════════════════════════════ */
 .morphix-card {
-  background: #ffffff; border: 1px solid #e2e8f0; border-radius: 1.25rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+  background: #ffffff; border: 1px solid #e8eaef; border-radius: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 4px 16px rgba(99,102,241,0.04);
+  transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
 }
 .morphix-card:hover {
-  box-shadow: 0 20px 60px rgba(99,102,241,0.12), 0 4px 16px rgba(0,0,0,0.08);
-  border-color: #a5b4fc; transform: translateY(-3px);
+  box-shadow: 0 24px 64px rgba(99,102,241,0.15), 0 4px 16px rgba(0,0,0,0.08);
+  border-color: #c4b5fd; transform: translateY(-4px);
 }
 .glass-card {
   background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 1.5rem; backdrop-filter: blur(12px);
-  transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+  border-radius: 1.5rem; backdrop-filter: blur(16px);
+  transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
 }
 .glass-card:hover {
-  background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15);
-  box-shadow: 0 0 40px rgba(99,102,241,0.15), 0 20px 60px rgba(0,0,0,0.3);
+  background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.16);
+  box-shadow: 0 0 50px rgba(99,102,241,0.18), 0 24px 60px rgba(0,0,0,0.35);
   transform: translateY(-4px) scale(1.01);
+}
+/* Premium entry cards — used in ChooseStartingPoint & CTA */
+.entry-card {
+  background: #ffffff; border: 1px solid #e8eaef; border-radius: 1.75rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 16px 48px rgba(99,102,241,0.06);
+  transition: all 0.45s cubic-bezier(0.16,1,0.3,1);
+  position: relative; overflow: hidden;
+}
+.entry-card::before {
+  content: ''; position: absolute; inset: 0; opacity: 0;
+  background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(99,102,241,0.07) 0%, transparent 70%);
+  transition: opacity 0.45s ease;
+}
+.entry-card:hover::before { opacity: 1; }
+.entry-card:hover {
+  box-shadow: 0 24px 80px rgba(99,102,241,0.18), 0 8px 24px rgba(0,0,0,0.10);
+  border-color: rgba(99,102,241,0.3); transform: translateY(-6px);
+}
+.entry-card-dark {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 1.75rem; backdrop-filter: blur(16px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3), 0 16px 48px rgba(0,0,0,0.2);
+  transition: all 0.45s cubic-bezier(0.16,1,0.3,1);
+  position: relative; overflow: hidden;
+}
+.entry-card-dark:hover {
+  background: rgba(255,255,255,0.06); border-color: rgba(99,102,241,0.35);
+  box-shadow: 0 24px 80px rgba(99,102,241,0.25), 0 8px 24px rgba(0,0,0,0.4);
+  transform: translateY(-6px);
 }
 .glow-card-purple { box-shadow: 0 0 0 1px rgba(139,92,246,0.2), 0 20px 40px rgba(139,92,246,0.08); }
 .glow-card-blue   { box-shadow: 0 0 0 1px rgba(99,102,241,0.2), 0 20px 40px rgba(99,102,241,0.08); }

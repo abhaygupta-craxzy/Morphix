@@ -169,8 +169,8 @@ function Column({ col, activeTheme }: { col: typeof COLUMN_CONFIG[0]; activeThem
       <div className="text-[9px] font-bold text-white/30 uppercase tracking-widest mb-1">{label}</div>
       <div className="h-[420px] overflow-hidden relative rounded-2xl">
         {/* gradient masks top & bottom */}
-        <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-[#FAFBFC] to-transparent z-10 pointer-events-none" />
-        <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#FAFBFC] to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-[#f9fafb] to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#f9fafb] to-transparent z-10 pointer-events-none" />
         <div className={`${speed} flex flex-col gap-2`} style={{ width: "100%" }}>
           {[...items, ...items].map((item, i) => (
             <div
@@ -257,17 +257,17 @@ export default function ComponentIntelligenceSection() {
   const categories = ["All","Navbars","Heroes","Dashboards","Pricing","Forms","Footers","Sidebars","Settings","Auth"];
 
   return (
-    <section id="component-intelligence" className="py-24 bg-[#FAFBFC] border-t border-slate-100 overflow-hidden">
+    <section id="component-intelligence" className="py-24 section-light-soft border-t border-slate-100/80 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#7C5CFF]/30 bg-[#7C5CFF]/8 text-xs font-bold text-[#7C5CFF] mb-5">
-            <Sparkles className="w-3.5 h-3.5 text-[#14B8A6]" /> Component Intelligence Engine
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-indigo-300/50 bg-indigo-50 text-xs font-bold text-indigo-600 mb-5">
+            <Sparkles className="w-3.5 h-3.5 text-violet-500" /> Component Intelligence Engine
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#070B14] tracking-tight mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">
             10,000+ Components.{" "}
-            <span className="bg-gradient-to-r from-[#5B7FFF] to-[#7C5CFF] text-transparent bg-clip-text">
+            <span className="gradient-text-violet">
               Any Style.
             </span>
           </h2>

@@ -1,171 +1,176 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Sparkles, Globe, LayoutGrid, ArrowRight, Zap, Check,
-  Code2, Download, Eye
-} from "lucide-react";
+import { Grid3X3, Globe, Sparkles, ArrowRight, Check } from "lucide-react";
 
-const quickActions = [
-  { id:"transform", icon:Globe,       label:"Transform a website", color:"from-blue-600 to-violet-600",   placeholder:"https://website-you-want-to-transform.com" },
-  { id:"browse",    icon:LayoutGrid,  label:"Browse components",   color:"from-amber-500 to-orange-500",  placeholder:"Search navbars, heroes, pricing, dashboards…" },
-  { id:"generate",  icon:Sparkles,    label:"Generate from scratch",color:"from-teal-600 to-emerald-600", placeholder:"Describe your dream website…" },
-];
-
-const prompts = [
-  "Redesign my e-commerce store in Stripe style",
-  "Build a SaaS dashboard for healthcare",
-  "Extract design DNA from Figma export",
-  "Transform my portfolio into Linear style",
-  "Generate a fintech landing page",
-  "Browse navbar components for B2B SaaS",
+const paths = [
+  {
+    id: "components",
+    icon: Grid3X3,
+    emoji: "🧩",
+    label: "Component Library",
+    sublabel: "Browse & Use",
+    desc: "Explore 10,000+ production-ready components, templates, and design systems.",
+    ctaLabel: "Explore Components",
+    accentColor: "#6366F1",
+    accentRgb: "99,102,241",
+    gradientFrom: "#6366F1",
+    gradientTo: "#8B5CF6",
+    perks: ["10,000+ components", "50+ categories", "Live preview"],
+  },
+  {
+    id: "transform",
+    icon: Globe,
+    emoji: "🌐",
+    label: "Transform Website",
+    sublabel: "Analyze & Improve",
+    desc: "Import any website or GitHub repo. Get AI analysis, design DNA, and transformation.",
+    ctaLabel: "Analyze Website",
+    accentColor: "#8B5CF6",
+    accentRgb: "139,92,246",
+    gradientFrom: "#8B5CF6",
+    gradientTo: "#06B6D4",
+    perks: ["URL & GitHub import", "AI scoring", "1.4s avg transform"],
+    featured: true,
+  },
+  {
+    id: "create",
+    icon: Sparkles,
+    emoji: "✨",
+    label: "Create New Project",
+    sublabel: "Idea to Product",
+    desc: "Start from a prompt, screenshot, Figma file, or inspiration. Build in minutes.",
+    ctaLabel: "Create Project",
+    accentColor: "#06B6D4",
+    accentRgb: "6,182,212",
+    gradientFrom: "#06B6D4",
+    gradientTo: "#10B981",
+    perks: ["5 input modes", "AI-powered", "Export code"],
+  },
 ];
 
 export default function CTASection() {
-  const [activeAction, setActiveAction] = useState("transform");
-  const [input, setInput] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const active = quickActions.find(a => a.id === activeAction)!;
-
-  function handleSubmit() {
-    if (!input) return;
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
-  }
+  const [hoveredPath, setHoveredPath] = useState<string | null>(null);
 
   return (
-    <section id="cta" className="py-20 lg:py-32 relative overflow-hidden bg-gradient-to-b from-white via-blue-50/30 to-white">
+    <section id="cta" className="py-20 lg:py-28 section-cta-gradient relative overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0 dot-grid opacity-30 pointer-events-none"/>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full bg-gradient-to-r from-blue-100/40 via-violet-100/30 to-teal-100/40 blur-3xl pointer-events-none"/>
+      <div className="absolute inset-0 dot-grid opacity-25 pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-indigo-600/15 blur-3xl pointer-events-none animate-pulse-glow" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full bg-violet-600/12 blur-3xl pointer-events-none animate-pulse-glow delay-1000" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-purple-600/8 blur-[80px] pointer-events-none" />
 
-      <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        {/* Eyebrow */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-semibold text-slate-600 mb-8 shadow-sm">
-          <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse-dot"/>
-          Morphix Studio is ready
-        </div>
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* Headline */}
-        <h2 className="text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight mb-5 leading-[1.05]">
-          What will you{" "}
-          <span className="gradient-text">transform</span>
-          {" "}today?
-        </h2>
-        <p className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-          Join 50,000 designers and developers using Morphix to build extraordinary websites.
-          Start free. No credit card needed.
-        </p>
-
-        {/* The studio input card */}
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl shadow-slate-200/60 overflow-hidden mb-8">
-          {/* Action type switcher */}
-          <div className="flex border-b border-slate-100">
-            {quickActions.map(action => {
-              const Icon = action.icon;
-              return (
-                <button
-                  key={action.id}
-                  onClick={() => { setActiveAction(action.id); setInput(""); }}
-                  className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-sm font-semibold transition-all border-b-2 ${
-                    activeAction === action.id
-                      ? "border-blue-600 text-blue-700 bg-blue-50/50"
-                      : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50"
-                  }`}
-                >
-                  <Icon className="w-4 h-4"/>
-                  <span className="hidden sm:inline">{action.label}</span>
-                </button>
-              );
-            })}
+        {/* Header */}
+        <div className="text-center mb-14">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/6 border border-white/10 rounded-full text-sm font-semibold text-white/70 mb-8 backdrop-blur">
+            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse-dot" />
+            Morphix Studio is ready
           </div>
 
-          {/* Input area */}
-          <div className="p-5">
-            {submitted ? (
-              <div className="flex flex-col items-center gap-3 py-6 animate-scale-in">
-                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-                  <Check className="w-6 h-6 text-green-600"/>
-                </div>
-                <p className="font-bold text-slate-800">Opening in Morphix Studio…</p>
-                <div className="flex gap-1">
-                  {[0,1,2].map(i=>(
-                    <div key={i} className="w-2 h-2 rounded-full bg-blue-400 animate-pulse-dot" style={{animationDelay:`${i*0.2}s`}}/>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <>
-                <div className="flex gap-3 mb-4">
-                  <div className="relative flex-1">
-                    <input
-                      type="text"
-                      value={input}
-                      onChange={e => setInput(e.target.value)}
-                      onKeyDown={e => e.key === "Enter" && handleSubmit()}
-                      placeholder={active.placeholder}
-                      className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/25 focus:border-blue-400 transition-all text-base"
-                    />
-                  </div>
-                  <button
-                    onClick={handleSubmit}
-                    disabled={!input}
-                    className={`flex items-center gap-2 px-6 py-4 bg-gradient-to-r ${active.color} text-white font-bold rounded-2xl hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed transition-all text-sm whitespace-nowrap`}
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight mb-5 leading-tight">
+            Choose Your Path{" "}
+            <span className="gradient-text-premium">
+              Into Morphix
+            </span>
+          </h2>
+          <p className="text-lg text-white/45 max-w-2xl mx-auto leading-relaxed">
+            Whether you&apos;re exploring components, transforming an existing website, or building a new
+            project — Morphix adapts to your workflow.
+          </p>
+        </div>
+
+        {/* Three Premium Gateway Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-14">
+          {paths.map(path => {
+            const Icon = path.icon;
+            const isHovered = hoveredPath === path.id;
+
+            return (
+              <div
+                key={path.id}
+                onMouseEnter={() => setHoveredPath(path.id)}
+                onMouseLeave={() => setHoveredPath(null)}
+                className="entry-card-dark group flex flex-col cursor-pointer relative"
+                style={{
+                  boxShadow: isHovered
+                    ? `0 32px 80px rgba(${path.accentRgb},0.3), 0 8px 24px rgba(0,0,0,0.5)`
+                    : undefined,
+                  borderColor: isHovered ? `rgba(${path.accentRgb},0.4)` : undefined,
+                }}
+              >
+                {/* Featured badge */}
+                {path.featured && (
+                  <div
+                    className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-[10px] font-black text-white whitespace-nowrap"
+                    style={{ background: `linear-gradient(135deg, ${path.gradientFrom}, ${path.gradientTo})` }}
                   >
-                    <Zap className="w-4 h-4"/>
-                    <span className="hidden sm:inline">Launch Studio</span>
-                    <span className="sm:hidden">Go</span>
+                    Most Popular
+                  </div>
+                )}
+
+                <div className="p-7 flex-1 flex flex-col">
+                  {/* Icon */}
+                  <div
+                    className="w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg mb-5 transition-transform duration-400 group-hover:scale-110"
+                    style={{ background: `linear-gradient(135deg, ${path.gradientFrom}, ${path.gradientTo})`, boxShadow: isHovered ? `0 8px 32px rgba(${path.accentRgb},0.5)` : `0 4px 16px rgba(${path.accentRgb},0.3)` }}
+                  >
+                    <Icon className="w-6 h-6" />
+                  </div>
+
+                  {/* Text */}
+                  <div className="mb-2">
+                    <div className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: path.accentColor }}>
+                      {path.sublabel}
+                    </div>
+                    <h3 className="text-xl font-black text-white mb-2 leading-tight">{path.label}</h3>
+                    <p className="text-sm text-white/45 leading-relaxed">{path.desc}</p>
+                  </div>
+
+                  {/* Perks */}
+                  <div className="space-y-1.5 mt-4 flex-1">
+                    {path.perks.map(perk => (
+                      <div key={perk} className="flex items-center gap-2">
+                        <Check className="w-3.5 h-3.5 flex-shrink-0" style={{ color: path.accentColor }} />
+                        <span className="text-xs text-white/50">{perk}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* CTA */}
+                  <button
+                    className="mt-6 w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold transition-all duration-400 cursor-pointer"
+                    style={{
+                      background: isHovered
+                        ? `linear-gradient(135deg, ${path.gradientFrom}, ${path.gradientTo})`
+                        : `rgba(${path.accentRgb}, 0.1)`,
+                      color: path.accentColor,
+                      border: `1.5px solid rgba(${path.accentRgb}, ${isHovered ? 0 : 0.25})`,
+                      boxShadow: isHovered ? `0 8px 24px rgba(${path.accentRgb},0.4)` : "none",
+                      ...(isHovered ? { color: "#ffffff" } : {}),
+                    }}
+                  >
+                    {path.ctaLabel}
+                    <ArrowRight className={`w-4 h-4 transition-transform duration-300 ${isHovered ? "translate-x-1" : ""}`} />
                   </button>
                 </div>
-
-                {/* Quick prompt chips */}
-                <div className="flex flex-wrap gap-2">
-                  {prompts.map(p => (
-                    <button
-                      key={p}
-                      onClick={() => setInput(p)}
-                      className="px-3 py-1.5 bg-slate-50 border border-slate-200 text-slate-600 text-xs font-medium rounded-xl hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition-all"
-                    >
-                      {p}
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* Bottom bar */}
-          <div className="flex items-center justify-between px-5 py-3 bg-slate-50 border-t border-slate-100">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                <Check className="w-3.5 h-3.5 text-green-500"/> Free plan available
               </div>
-              <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                <Check className="w-3.5 h-3.5 text-green-500"/> Export React + Tailwind
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <button className="flex items-center gap-1 px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-xs font-semibold rounded-xl hover:bg-slate-50 transition-colors">
-                <Eye className="w-3 h-3"/> Docs
-              </button>
-              <button className="flex items-center gap-1 px-3 py-1.5 bg-white border border-slate-200 text-slate-600 text-xs font-semibold rounded-xl hover:bg-slate-50 transition-colors">
-                <Code2 className="w-3 h-3"/> API
-              </button>
-            </div>
-          </div>
+            );
+          })}
         </div>
 
-        {/* Social proof strip */}
-        <div className="flex flex-wrap items-center justify-center gap-6">
+        {/* Bottom trust strip */}
+        <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-white/30">
           {[
-            "No credit card",
-            "Free tier forever",
-            "Export clean code",
-            "Ship in minutes",
-          ].map(p => (
-            <div key={p} className="flex items-center gap-1.5 text-sm text-slate-500">
-              <Check className="w-4 h-4 text-green-500 flex-shrink-0"/>
-              <span>{p}</span>
+            { icon: Check, text: "Free plan available" },
+            { icon: Check, text: "No credit card required" },
+            { icon: Check, text: "Export clean React + Tailwind" },
+            { icon: Check, text: "Ship in minutes" },
+          ].map(item => (
+            <div key={item.text} className="flex items-center gap-2">
+              <item.icon className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+              <span>{item.text}</span>
             </div>
           ))}
         </div>

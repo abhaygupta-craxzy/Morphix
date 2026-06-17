@@ -7,15 +7,15 @@ const navLinks = [
   {
     label: "Product",
     children: [
-      { label: "Transform Website", desc: "Turn any URL into a new design" },
-      { label: "Design DNA",        desc: "Extract design systems from anything" },
-      { label: "Component Library", desc: "10,000+ production components" },
-      { label: "Live Preview",      desc: "See changes across all devices" },
+      { label: "Component Library",    desc: "10,000+ production-ready components",   color: "#6366F1" },
+      { label: "Transform Website",    desc: "Import, analyze, and redesign any site",  color: "#8B5CF6" },
+      { label: "Create New Project",   desc: "Start from idea, prompt, or Figma",      color: "#06B6D4" },
+      { label: "Design DNA Engine",    desc: "Extract design systems from anything",    color: "#10B981" },
     ],
   },
   { label: "Components", href: "#components" },
-  { label: "Styles",     href: "#styles" },
   { label: "Pricing",    href: "#" },
+  { label: "Docs",       href: "#" },
 ];
 
 export default function Navbar() {
@@ -81,17 +81,20 @@ export default function Navbar() {
                     <div
                       onMouseEnter={() => setDropdown(link.label)}
                       onMouseLeave={() => setDropdown(null)}
-                      className="absolute top-full left-0 pt-3 w-64 animate-scale-in"
+                      className="absolute top-full left-0 pt-3 w-72 animate-scale-in"
                     >
-                      <div className="bg-[#0d0d20]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-2 shadow-2xl shadow-black/50">
+                      <div className="bg-[#0d0d20]/98 backdrop-blur-xl border border-white/10 rounded-2xl p-2 shadow-2xl shadow-black/60">
                         {link.children.map((child) => (
                           <a
                             key={child.label}
                             href="#"
-                            className="flex flex-col px-3 py-2.5 rounded-xl hover:bg-white/8 transition-all group"
+                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/6 transition-all group"
                           >
-                            <span className="text-sm font-semibold text-white/90 group-hover:text-white">{child.label}</span>
-                            <span className="text-xs text-white/40 group-hover:text-white/60 mt-0.5">{child.desc}</span>
+                            <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: child.color }} />
+                            <div>
+                              <span className="text-sm font-semibold text-white/85 group-hover:text-white block">{child.label}</span>
+                              <span className="text-xs text-white/35 group-hover:text-white/55 mt-0.5 block">{child.desc}</span>
+                            </div>
                           </a>
                         ))}
                       </div>
