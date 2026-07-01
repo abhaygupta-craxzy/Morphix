@@ -1,180 +1,138 @@
 "use client";
 
-import { useState } from "react";
-import { Grid3X3, Globe, Sparkles, ArrowRight, Check } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { ArrowRight } from "lucide-react";
 
-const paths = [
-  {
-    id: "components",
-    icon: Grid3X3,
-    emoji: "🧩",
-    label: "Component Library",
-    sublabel: "Browse & Use",
-    desc: "Explore 10,000+ production-ready components, templates, and design systems.",
-    ctaLabel: "Explore Components",
-    accentColor: "#6366F1",
-    accentRgb: "99,102,241",
-    gradientFrom: "#6366F1",
-    gradientTo: "#8B5CF6",
-    perks: ["10,000+ components", "50+ categories", "Live preview"],
-  },
-  {
-    id: "transform",
-    icon: Globe,
-    emoji: "🌐",
-    label: "Transform Website",
-    sublabel: "Analyze & Improve",
-    desc: "Import any website or GitHub repo. Get AI analysis, design DNA, and transformation.",
-    ctaLabel: "Analyze Website",
-    accentColor: "#8B5CF6",
-    accentRgb: "139,92,246",
-    gradientFrom: "#8B5CF6",
-    gradientTo: "#06B6D4",
-    perks: ["URL & GitHub import", "AI scoring", "1.4s avg transform"],
-    featured: true,
-  },
-  {
-    id: "create",
-    icon: Sparkles,
-    emoji: "✨",
-    label: "Create New Project",
-    sublabel: "Idea to Product",
-    desc: "Start from a prompt, screenshot, Figma file, or inspiration. Build in minutes.",
-    ctaLabel: "Create Project",
-    accentColor: "#06B6D4",
-    accentRgb: "6,182,212",
-    gradientFrom: "#06B6D4",
-    gradientTo: "#10B981",
-    perks: ["5 input modes", "AI-powered", "Export code"],
-  },
-];
 
-export default function CTASection() {
-  const [hoveredPath, setHoveredPath] = useState<string | null>(null);
+
+function useInView(threshold = 0.2) {
+  const ref = useRef<HTMLElement>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setInView(true); }, { threshold });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, inView };
+}
+
+interface CTASectionProps { onOpen?: () => void; }
+
+export default function CTASection({ onOpen }: CTASectionProps) {
+  const { ref, inView } = useInView(0.2);
+  const [hovered, setHovered] = useState(false);
 
   return (
-    <section id="cta" className="py-20 lg:py-28 section-cta-gradient relative overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 dot-grid opacity-25 pointer-events-none" />
-      <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-indigo-600/15 blur-3xl pointer-events-none animate-pulse-glow" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full bg-violet-600/12 blur-3xl pointer-events-none animate-pulse-glow delay-1000" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-purple-600/8 blur-[80px] pointer-events-none" />
+    <section
+      ref={ref as any}
+      id="cta"
+      className="relative border-t"
+      style={{
+        background: "#050816",
+        borderColor: "rgba(255,255,255,0.06)",
+        paddingTop: "10rem",
+        paddingBottom: "10rem",
+      }}
+    >
+      {/* Radial glow */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: "radial-gradient(ellipse 50% 40% at 50% 50%, rgba(59,130,246,0.04) 0%, transparent 70%)",
+      }} />
 
-      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 
-        {/* Header */}
-        <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/6 border border-white/10 rounded-full text-sm font-semibold text-white/70 mb-8 backdrop-blur">
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse-dot" />
-            Morphix Studio is ready
-          </div>
-
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight mb-5 leading-tight">
-            Choose Your Path{" "}
-            <span className="gradient-text-premium">
-              Into Morphix
-            </span>
-          </h2>
-          <p className="text-lg text-white/45 max-w-2xl mx-auto leading-relaxed">
-            Whether you&apos;re exploring components, transforming an existing website, or building a new
-            project — Morphix adapts to your workflow.
-          </p>
+        {/* Label */}
+        <div
+          className="inline-flex items-center gap-2 text-xs font-medium mb-10"
+          style={{
+            color: "rgba(147,197,253,0.50)",
+            opacity: inView ? 1 : 0,
+            transform: inView ? "translateY(0)" : "translateY(16px)",
+            transition: "opacity 600ms ease, transform 600ms cubic-bezier(0.16,1,0.3,1)",
+          }}
+        >
+          <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: "#4ade80", animation: "pulseGreen 2s ease-in-out infinite" }} />
+          Morphix Is Ready
         </div>
 
-        {/* Three Premium Gateway Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-14">
-          {paths.map(path => {
-            const Icon = path.icon;
-            const isHovered = hoveredPath === path.id;
+        {/* Headline */}
+        <h2
+          className="text-white tracking-tight mb-6 leading-[0.92]"
+          style={{
+            fontSize: "clamp(2.8rem,7vw,5.5rem)",
+            fontWeight: 300,
+            opacity: inView ? 1 : 0,
+            transform: inView ? "translateY(0)" : "translateY(20px)",
+            transition: "opacity 600ms ease 100ms, transform 600ms cubic-bezier(0.16,1,0.3,1) 100ms",
+          }}
+        >
+          Ready To Start?
+        </h2>
 
-            return (
-              <div
-                key={path.id}
-                onMouseEnter={() => setHoveredPath(path.id)}
-                onMouseLeave={() => setHoveredPath(null)}
-                className="entry-card-dark group flex flex-col cursor-pointer relative"
-                style={{
-                  boxShadow: isHovered
-                    ? `0 32px 80px rgba(${path.accentRgb},0.3), 0 8px 24px rgba(0,0,0,0.5)`
-                    : undefined,
-                  borderColor: isHovered ? `rgba(${path.accentRgb},0.4)` : undefined,
-                }}
-              >
-                {/* Featured badge */}
-                {path.featured && (
-                  <div
-                    className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-[10px] font-black text-white whitespace-nowrap"
-                    style={{ background: `linear-gradient(135deg, ${path.gradientFrom}, ${path.gradientTo})` }}
-                  >
-                    Most Popular
-                  </div>
-                )}
+        {/* Subheadline */}
+        <p
+          className="text-lg mb-12 max-w-md mx-auto leading-relaxed font-light"
+          style={{
+            color: "rgba(255,255,255,0.35)",
+            opacity: inView ? 1 : 0,
+            transform: inView ? "translateY(0)" : "translateY(16px)",
+            transition: "opacity 600ms ease 200ms, transform 600ms cubic-bezier(0.16,1,0.3,1) 200ms",
+          }}
+        >
+          Create, customize, and launch websites — all inside one AI workspace.
+        </p>
 
-                <div className="p-7 flex-1 flex flex-col">
-                  {/* Icon */}
-                  <div
-                    className="w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg mb-5 transition-transform duration-400 group-hover:scale-110"
-                    style={{ background: `linear-gradient(135deg, ${path.gradientFrom}, ${path.gradientTo})`, boxShadow: isHovered ? `0 8px 32px rgba(${path.accentRgb},0.5)` : `0 4px 16px rgba(${path.accentRgb},0.3)` }}
-                  >
-                    <Icon className="w-6 h-6" />
-                  </div>
+        {/* Actions */}
+        <div
+          className="flex flex-col sm:flex-row items-center justify-center gap-3"
+          style={{
+            opacity: inView ? 1 : 0,
+            transform: inView ? "translateY(0)" : "translateY(16px)",
+            transition: "opacity 600ms ease 360ms, transform 600ms cubic-bezier(0.16,1,0.3,1) 360ms",
+          }}
+        >
+          <button
+            onClick={onOpen}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            className="flex items-center gap-2.5 px-8 py-3.5 text-black text-base font-semibold rounded-full transition-all duration-200"
+            style={{
+              background: "#ffffff",
+              transform: hovered ? "translateY(-1px)" : "translateY(0)",
+              boxShadow: hovered
+                ? "0 8px 32px rgba(255,255,255,0.14), inset 0 0 0 1px rgba(255,255,255,0.20)"
+                : "none",
+            }}
+          >
+            Open Workspace
+            <ArrowRight className={`w-4 h-4 transition-transform duration-200 ${hovered ? "translate-x-0.5" : ""}`} />
+          </button>
 
-                  {/* Text */}
-                  <div className="mb-2">
-                    <div className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: path.accentColor }}>
-                      {path.sublabel}
-                    </div>
-                    <h3 className="text-xl font-black text-white mb-2 leading-tight">{path.label}</h3>
-                    <p className="text-sm text-white/45 leading-relaxed">{path.desc}</p>
-                  </div>
-
-                  {/* Perks */}
-                  <div className="space-y-1.5 mt-4 flex-1">
-                    {path.perks.map(perk => (
-                      <div key={perk} className="flex items-center gap-2">
-                        <Check className="w-3.5 h-3.5 flex-shrink-0" style={{ color: path.accentColor }} />
-                        <span className="text-xs text-white/50">{perk}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* CTA */}
-                  <button
-                    className="mt-6 w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold transition-all duration-400 cursor-pointer"
-                    style={{
-                      background: isHovered
-                        ? `linear-gradient(135deg, ${path.gradientFrom}, ${path.gradientTo})`
-                        : `rgba(${path.accentRgb}, 0.1)`,
-                      color: path.accentColor,
-                      border: `1.5px solid rgba(${path.accentRgb}, ${isHovered ? 0 : 0.25})`,
-                      boxShadow: isHovered ? `0 8px 24px rgba(${path.accentRgb},0.4)` : "none",
-                      ...(isHovered ? { color: "#ffffff" } : {}),
-                    }}
-                  >
-                    {path.ctaLabel}
-                    <ArrowRight className={`w-4 h-4 transition-transform duration-300 ${isHovered ? "translate-x-1" : ""}`} />
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Bottom trust strip */}
-        <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-white/30">
-          {[
-            { icon: Check, text: "Free plan available" },
-            { icon: Check, text: "No credit card required" },
-            { icon: Check, text: "Export clean React + Tailwind" },
-            { icon: Check, text: "Ship in minutes" },
-          ].map(item => (
-            <div key={item.text} className="flex items-center gap-2">
-              <item.icon className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-              <span>{item.text}</span>
-            </div>
-          ))}
+          <a
+            href="/login"
+            className="flex items-center gap-2 px-7 py-3.5 text-base font-medium rounded-full transition-all duration-200"
+            style={{ color: "rgba(147,197,253,0.70)", border: "1px solid rgba(59,130,246,0.22)", background: "rgba(59,130,246,0.05)" }}
+            onMouseEnter={e => {
+              e.currentTarget.style.color = "rgba(147,197,253,1)";
+              e.currentTarget.style.borderColor = "rgba(59,130,246,0.45)";
+              e.currentTarget.style.background = "rgba(59,130,246,0.10)";
+              e.currentTarget.style.transform = "translateY(-1px)";
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.color = "rgba(147,197,253,0.70)";
+              e.currentTarget.style.borderColor = "rgba(59,130,246,0.22)";
+              e.currentTarget.style.background = "rgba(59,130,246,0.05)";
+              e.currentTarget.style.transform = "translateY(0)";
+            }}
+          >
+            Sign Up Free →
+          </a>
         </div>
       </div>
+
+      <style>{`
+        @keyframes pulseGreen { 0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16,185,129,0.4); } 50% { opacity: 0.75; box-shadow: 0 0 0 5px rgba(16,185,129,0); } }
+      `}</style>
     </section>
   );
 }

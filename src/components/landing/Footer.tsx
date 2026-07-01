@@ -1,67 +1,112 @@
 "use client";
 
-import { Zap, ArrowRight, GitBranch, MessageCircle, Video, Link2 } from "lucide-react";
+import Link from "next/link";
+
+
 
 const footerLinks = {
-  Product: ["Transform Website", "Design DNA", "Component Library", "Style Marketplace", "Live Preview", "GitHub Export"],
-  Developers: ["Documentation", "API Reference", "SDKs", "Changelog", "Status", "Open Source"],
-  Company: ["About", "Blog", "Careers", "Press Kit", "Privacy Policy", "Terms of Service"],
-  Resources: ["Templates", "Case Studies", "Community", "Support", "Contact", "Affiliate Program"],
+  Product:    ["Create Website", "Transform Website", "Design DNA", "Component Library", "Live Preview", "GitHub Export"],
+  Developers: ["Documentation", "API Reference", "Changelog", "Status", "Open Source"],
+  Company:    ["About", "Blog", "Careers", "Privacy Policy", "Terms of Service"],
+  Resources:  ["Templates", "Community", "Support", "Contact"],
 };
 
-const socials = [
-  { icon: MessageCircle, label: "Twitter",  href: "#" },
-  { icon: GitBranch,     label: "GitHub",   href: "#" },
-  { icon: Video,         label: "YouTube",  href: "#" },
-  { icon: Link2,         label: "LinkedIn", href: "#" },
-];
+interface FooterProps {
+  onNavClick?: (tab: "explore" | "transform" | "create") => void;
+}
 
-export default function Footer() {
+export default function Footer({ onNavClick }: FooterProps) {
   return (
-    <footer className="relative bg-[#07070f] border-t border-white/5 overflow-hidden">
-      {/* Background elements */}
-      <div className="absolute inset-0 dot-grid opacity-40 pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-72 h-40 orb-indigo blur-3xl opacity-20 pointer-events-none" />
-      <div className="absolute top-0 right-1/4 w-60 h-40 orb-purple blur-3xl opacity-15 pointer-events-none" />
+    <footer
+      className="relative border-t"
+      style={{ background: "#050816", borderColor: "rgba(255,255,255,0.06)" }}
+    >
+      {/* Blue top gradient line */}
+      <div className="absolute top-0 left-0 right-0 h-px"
+        style={{ background: "linear-gradient(90deg, transparent 0%, rgba(59,130,246,0.30) 50%, transparent 100%)" }} />
 
-      {/* Main footer grid */}
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
-          {/* Brand column */}
-          <div className="lg:col-span-1">
-            {/* Logo */}
-            <div className="flex items-center gap-2.5 mb-5">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                <Zap className="w-4 h-4 text-white" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10">
+
+        {/* Main grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-8 lg:gap-12 mb-16">
+
+          {/* Brand */}
+          <div className="col-span-2">
+            <div className="flex items-center gap-2 mb-5">
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center"
+                style={{
+                  background: "linear-gradient(135deg, rgba(59,130,246,0.15) 0%, rgba(13,20,40,0.80) 100%)",
+                  border: "1px solid rgba(59,130,246,0.25)",
+                }}>
+                <span className="font-black text-sm"
+                  style={{
+                    background: "linear-gradient(135deg, #93C5FD 0%, #3B82F6 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                  }}>
+                  M
+                </span>
               </div>
-              <span className="text-lg font-extrabold text-white tracking-tight">Morphix</span>
+              <span className="font-semibold text-white text-sm tracking-tight">Morphix</span>
             </div>
-            <p className="text-sm text-white/40 leading-relaxed mb-5">
-              The AI Website Transformation Studio. Transform, redesign, and remix any website with AI.
+            <p className="text-sm leading-relaxed mb-6 max-w-xs" style={{ color: "rgba(255,255,255,0.35)", fontWeight: 400 }}>
+              Create, customize, and launch websites — all inside one AI workspace.
             </p>
-            {/* Social icons */}
-            <div className="flex items-center gap-2">
-              {socials.map(s => {
-                const Icon = s.icon;
-                return (
-                  <a key={s.label} href={s.href}
-                    className="w-8 h-8 rounded-lg bg-white/5 border border-white/8 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 hover:border-white/15 transition-all"
-                    aria-label={s.label}>
-                    <Icon className="w-3.5 h-3.5" />
-                  </a>
-                );
-              })}
+            {/* Status */}
+            <div className="flex items-center gap-2 text-xs" style={{ color: "rgba(255,255,255,0.28)" }}>
+              <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: "#4ade80", animation: "pulseGreen 2s ease-in-out infinite" }} />
+              All systems operational
+            </div>
+
+            {/* Social links */}
+            <div className="flex items-center gap-3 mt-6">
+              {["Twitter", "GitHub", "Discord"].map(s => (
+                <a
+                  key={s}
+                  href="#"
+                  className="text-[10px] px-2.5 py-1.5 rounded-lg transition-all duration-200"
+                  style={{ color: "rgba(255,255,255,0.28)", border: "1px solid rgba(255,255,255,0.07)", background: "transparent" }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.color = "rgba(147,197,253,0.80)";
+                    e.currentTarget.style.borderColor = "rgba(59,130,246,0.28)";
+                    e.currentTarget.style.background = "rgba(59,130,246,0.06)";
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.color = "rgba(255,255,255,0.28)";
+                    e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)";
+                    e.currentTarget.style.background = "transparent";
+                  }}
+                >
+                  {s}
+                </a>
+              ))}
             </div>
           </div>
 
           {/* Link columns */}
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
-              <h3 className="text-xs font-bold text-white/50 uppercase tracking-widest mb-4">{category}</h3>
-              <ul className="space-y-2.5">
+              <h3 className="text-[10px] font-bold uppercase tracking-widest mb-4"
+                style={{ color: "rgba(255,255,255,0.28)" }}>
+                {category}
+              </h3>
+              <ul className="space-y-3">
                 {links.map(link => (
                   <li key={link}>
-                    <a href="#" className="text-sm text-white/40 hover:text-white/90 transition-colors">
+                    <a
+                      href="#"
+                      className="text-sm transition-all duration-200"
+                      style={{ color: "rgba(255,255,255,0.35)", fontWeight: 400 }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.color = "rgba(255,255,255,0.80)";
+                        e.currentTarget.style.paddingLeft = "4px";
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.color = "rgba(255,255,255,0.35)";
+                        e.currentTarget.style.paddingLeft = "0";
+                      }}
+                    >
                       {link}
                     </a>
                   </li>
@@ -71,42 +116,30 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Newsletter */}
-        <div className="mt-14 pt-8 border-t border-white/5">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-            <div>
-              <div className="text-sm font-bold text-white mb-1">Stay in the loop</div>
-              <div className="text-xs text-white/40">AI design updates, new components, and feature releases.</div>
-            </div>
-            <div className="flex gap-2 w-full lg:w-auto">
-              <input
-                type="email"
-                placeholder="your@email.com"
-                className="flex-1 lg:w-64 px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/40 transition-all"
-              />
-              <button className="flex items-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-bold rounded-xl hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5 transition-all whitespace-nowrap">
-                Subscribe <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-        </div>
-
         {/* Bottom bar */}
-        <div className="mt-8 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-xs text-white/25">
-            © 2025 Morphix. All rights reserved.
+        <div className="border-t flex flex-col sm:flex-row items-center justify-between gap-4 pt-8"
+          style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+          <div className="text-xs" style={{ color: "rgba(255,255,255,0.22)" }}>
+            © 2026 Morphix. All rights reserved.
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-white/25">
-            <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse-dot" />
-            All systems operational
-          </div>
-          <div className="flex items-center gap-4">
-            <a href="#" className="text-xs text-white/25 hover:text-white/60 transition-colors">Privacy</a>
-            <a href="#" className="text-xs text-white/25 hover:text-white/60 transition-colors">Terms</a>
-            <a href="#" className="text-xs text-white/25 hover:text-white/60 transition-colors">Cookies</a>
+          <div className="flex items-center gap-5">
+            {["Privacy", "Terms", "Cookies"].map(item => (
+              <a
+                key={item}
+                href="#"
+                className="text-xs transition-colors duration-200"
+                style={{ color: "rgba(255,255,255,0.22)" }}
+                onMouseEnter={e => e.currentTarget.style.color = "rgba(147,197,253,0.65)"}
+                onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.22)"}
+              >
+                {item}
+              </a>
+            ))}
           </div>
         </div>
       </div>
+
+      <style>{`@keyframes pulseGreen{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,0.4)}50%{opacity:0.75;box-shadow:0 0 0 5px rgba(16,185,129,0)}}`}</style>
     </footer>
   );
 }

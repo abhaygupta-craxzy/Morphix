@@ -1,309 +1,385 @@
 "use client";
 
-import { useState } from "react";
-import { Globe, Sparkles, ArrowRight, Grid3X3, GitBranch, Camera, FileText, Palette, Wand2, Upload, Code2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Globe, Sparkles, Check, Search } from "lucide-react";
 
-const entryCards = [
+
+/* ── In-view hook ── */
+function useInView(threshold = 0.15) {
+  const ref = useRef<HTMLElement>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setInView(true); }, { threshold });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, inView };
+}
+
+/* ── Explore card preview ── */
+function ExplorePreview() {
+  const [activeIdx, setActiveIdx] = useState(0);
+  const items = ["Gradient Hero", "Glass Navbar", "Pricing Table", "Auth Form", "Dashboard", "Bento Grid"];
+  const cats = ["All", "Heroes", "Navbars", "Cards"];
+
+  useEffect(() => {
+    const t = setInterval(() => setActiveIdx(i => (i + 1) % items.length), 1800);
+    return () => clearInterval(t);
+  }, [items.length]);
+
+  return (
+    <div className="w-full h-full flex flex-col" style={{ background: "#07090E" }}>
+      {/* Toolbar */}
+      <div className="flex items-center gap-2 px-3 py-2 border-b" style={{ borderColor: "rgba(59,130,246,0.10)", background: "rgba(0,0,0,0.35)" }}>
+        <div className="relative flex-1">
+          <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-2.5 h-2.5" style={{ color: "rgba(59,130,246,0.45)" }} />
+          <div className="w-full pl-6 pr-2 py-1 rounded-lg text-[8px] font-mono" style={{ background: "rgba(59,130,246,0.05)", border: "1px solid rgba(59,130,246,0.12)", color: "rgba(147,197,253,0.50)" }}>
+            Search 10,000+ components...
+          </div>
+        </div>
+        <div className="flex gap-1">
+          {cats.map((c, i) => (
+            <div key={c} className="px-1.5 py-0.5 rounded text-[7px] font-bold transition-all"
+              style={i === 0
+                ? { background: "#3B82F6", color: "#fff" }
+                : { background: "rgba(59,130,246,0.06)", color: "rgba(147,197,253,0.45)", border: "1px solid rgba(59,130,246,0.12)" }}>
+              {c}
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Grid */}
+      <div className="flex-1 p-2 grid grid-cols-3 gap-1.5 overflow-hidden">
+        {items.map((name, i) => (
+          <div key={name}
+            className="rounded-lg overflow-hidden transition-all cursor-pointer"
+            style={{
+              border: activeIdx === i ? "1px solid rgba(59,130,246,0.45)" : "1px solid rgba(255,255,255,0.06)",
+              background: activeIdx === i ? "rgba(59,130,246,0.08)" : "rgba(255,255,255,0.02)",
+              transform: activeIdx === i ? "scale(1.02)" : "scale(1)",
+              boxShadow: activeIdx === i ? "0 0 12px rgba(59,130,246,0.20)" : "none",
+              transition: "all 0.35s cubic-bezier(0.16,1,0.3,1)",
+            }}>
+            <div className="h-10 relative overflow-hidden" style={{ background: i % 2 === 0 ? "#0D0F14" : "#090B12" }}>
+              {activeIdx === i && (
+                <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 50% 50%, rgba(59,130,246,0.10) 0%, transparent 70%)" }} />
+              )}
+            </div>
+            <div className="px-1 py-0.5" style={{ background: "rgba(0,0,0,0.40)" }}>
+              <div className="text-[6.5px] font-bold truncate" style={{ color: activeIdx === i ? "rgba(147,197,253,0.80)" : "rgba(255,255,255,0.35)" }}>{name}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="px-3 py-1.5 border-t flex items-center justify-between" style={{ borderColor: "rgba(59,130,246,0.10)", background: "rgba(0,0,0,0.30)" }}>
+        <span className="text-[7px] font-mono" style={{ color: "rgba(147,197,253,0.40)" }}>10,000+ components</span>
+        <span className="text-[7px] font-bold" style={{ color: "rgba(59,130,246,0.65)" }}>Browse →</span>
+      </div>
+    </div>
+  );
+}
+
+/* ── Transform card preview ── */
+function TransformPreview() {
+  const [pipelineStep, setPipelineStep] = useState(0);
+  const steps = [
+    { label: "Crawling layout nodes" },
+    { label: "Extracting design DNA" },
+    { label: "Matching components" },
+    { label: "Generating report" },
+  ];
+
+  useEffect(() => {
+    const t = setInterval(() => setPipelineStep(s => (s + 1) % (steps.length + 1)), 1400);
+    return () => clearInterval(t);
+  }, [steps.length]);
+
+  return (
+    <div className="w-full h-full flex flex-col" style={{ background: "#07090E" }}>
+      {/* URL bar */}
+      <div className="px-3 py-2 border-b" style={{ borderColor: "rgba(59,130,246,0.10)", background: "rgba(0,0,0,0.35)" }}>
+        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg" style={{ background: "rgba(59,130,246,0.04)", border: "1px solid rgba(59,130,246,0.14)" }}>
+          <Globe className="w-2.5 h-2.5 flex-shrink-0" style={{ color: "rgba(59,130,246,0.55)" }} />
+          <span className="text-[8px] font-mono flex-1" style={{ color: "rgba(255,255,255,0.38)" }}>https://oldcorp-widgets.com</span>
+          <span className="px-1.5 py-0.5 text-[7px] font-bold rounded" style={{ background: "#3B82F6", color: "#fff" }}>Analyze</span>
+        </div>
+      </div>
+      {/* Pipeline */}
+      <div className="flex-1 p-2.5 flex flex-col gap-1.5">
+        {steps.map((s, i) => {
+          const done = i < pipelineStep;
+          const active = i === pipelineStep;
+          return (
+            <div key={s.label} className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full flex-shrink-0 flex items-center justify-center transition-all"
+                style={{
+                  background: done ? "rgba(59,130,246,0.18)" : active ? "rgba(59,130,246,0.06)" : "rgba(255,255,255,0.03)",
+                  border: done ? "1px solid rgba(59,130,246,0.45)" : active ? "1px solid rgba(59,130,246,0.28)" : "1px solid rgba(255,255,255,0.07)",
+                  transition: "all 0.35s cubic-bezier(0.16,1,0.3,1)",
+                }}>
+                {done && <Check className="w-1.5 h-1.5" style={{ color: "#93C5FD" }} />}
+                {active && <span className="w-1 h-1 rounded-full inline-block" style={{ background: "#3B82F6", animation: "pulse 1.5s ease-in-out infinite" }} />}
+              </div>
+              <div className="flex-1">
+                <div className="text-[8px] transition-all" style={{ color: done ? "rgba(255,255,255,0.45)" : active ? "rgba(255,255,255,0.80)" : "rgba(255,255,255,0.22)" }}>{s.label}</div>
+                <div className="h-0.5 rounded-full mt-0.5 overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+                  <div className="h-full rounded-full transition-all" style={{
+                    width: done ? "100%" : active ? "60%" : "0%",
+                    background: "#3B82F6",
+                    transition: "width 0.8s cubic-bezier(0.16,1,0.3,1)",
+                  }} />
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {/* DNA strip */}
+      <div className="px-3 py-2 border-t" style={{ borderColor: "rgba(59,130,246,0.10)", background: "rgba(0,0,0,0.30)" }}>
+        <div className="text-[7px] font-bold uppercase tracking-wider mb-1" style={{ color: "rgba(147,197,253,0.40)" }}>Design DNA</div>
+        <div className="flex gap-1">
+          {["#1a1a2e", "#0f3460", "#16213e", "#1e40af", "#3B82F6"].map(c => (
+            <div key={c} className="w-4 h-4 rounded transition-all hover:scale-110" style={{ backgroundColor: c, border: "1px solid rgba(59,130,246,0.18)" }} />
+          ))}
+          <span className="ml-auto text-[7px] self-center" style={{ color: "rgba(147,197,253,0.35)" }}>Score: 8.4</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Create card preview ── */
+function CreatePreview() {
+  const [buildStep, setBuildStep] = useState(0);
+  const [cursorVisible, setCursorVisible] = useState(true);
+  const steps = ["Analyzing prompt", "Selecting components", "Building layout", "Applying theme"];
+
+  useEffect(() => {
+    const t = setInterval(() => setBuildStep(s => (s + 1) % (steps.length + 1)), 1600);
+    return () => clearInterval(t);
+  }, [steps.length]);
+
+  useEffect(() => {
+    const t = setInterval(() => setCursorVisible(v => !v), 530);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <div className="w-full h-full flex flex-col" style={{ background: "#07090E" }}>
+      {/* Prompt input */}
+      <div className="p-3 border-b" style={{ borderColor: "rgba(59,130,246,0.10)", background: "rgba(0,0,0,0.35)" }}>
+        <div className="flex items-start gap-2 mb-2">
+          <Sparkles className="w-2.5 h-2.5 flex-shrink-0 mt-0.5" style={{ color: "rgba(59,130,246,0.60)" }} />
+          <div className="text-[8px] leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
+            &ldquo;Dark SaaS landing page with bento features...
+            <span style={{ opacity: cursorVisible ? 1 : 0, transition: "opacity 0.1s", color: "#3B82F6" }}>|</span>
+            &rdquo;
+          </div>
+        </div>
+        <div className="flex gap-1">
+          {["Screenshot", "Figma", "Prompt"].map((m, i) => (
+            <div key={m} className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[7px] font-semibold transition-all"
+              style={i === 2
+                ? { background: "rgba(59,130,246,0.12)", border: "1px solid rgba(59,130,246,0.28)", color: "rgba(147,197,253,0.85)" }
+                : { background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.28)" }}>
+              {m}
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Build steps */}
+      <div className="flex-1 p-2.5 flex flex-col gap-1.5">
+        {steps.map((s, i) => {
+          const done = i < buildStep;
+          const active = i === buildStep;
+          return (
+            <div key={s} className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full flex-shrink-0 flex items-center justify-center transition-all"
+                style={{
+                  background: done ? "rgba(59,130,246,0.18)" : active ? "rgba(59,130,246,0.06)" : "rgba(255,255,255,0.02)",
+                  border: done ? "1px solid rgba(59,130,246,0.45)" : active ? "1px solid rgba(59,130,246,0.28)" : "1px solid rgba(255,255,255,0.06)",
+                  transition: "all 0.35s cubic-bezier(0.16,1,0.3,1)",
+                }}>
+                {done && <Check className="w-1.5 h-1.5" style={{ color: "#93C5FD" }} />}
+                {active && <span className="w-1 h-1 rounded-full inline-block" style={{ background: "#3B82F6", animation: "pulse 1.5s ease-in-out infinite" }} />}
+              </div>
+              <span className="text-[8px] transition-all" style={{ color: done ? "rgba(255,255,255,0.40)" : active ? "rgba(255,255,255,0.80)" : "rgba(255,255,255,0.18)" }}>
+                {s}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+      {/* Generated preview strip */}
+      {buildStep >= 2 && (
+        <div className="mx-3 mb-2.5 rounded-lg overflow-hidden h-12 transition-all"
+          style={{ background: "#0D0F14", border: "1px solid rgba(59,130,246,0.18)", opacity: buildStep >= 3 ? 1 : 0.5, transition: "opacity 0.6s ease" }}>
+          <div className="p-2 flex flex-col gap-1">
+            <div className="flex justify-between">
+              <div className="h-1.5 w-10 rounded" style={{ background: "rgba(255,255,255,0.25)" }} />
+              <div className="h-3 w-8 rounded" style={{ background: "rgba(59,130,246,0.25)", border: "1px solid rgba(59,130,246,0.30)" }} />
+            </div>
+            <div className="h-2 w-2/3 rounded" style={{ background: "rgba(255,255,255,0.08)" }} />
+          </div>
+        </div>
+      )}
+      <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }`}</style>
+    </div>
+  );
+}
+
+const CARDS = [
   {
-    id: "components",
-    icon: Grid3X3,
+    id: "explore",
     emoji: "🧩",
-    label: "Component Library",
-    tagline: "Browse, Preview & Use",
-    description: "Explore 10,000+ production-ready components, templates, patterns, and complete design systems across every framework and style.",
-    accentColor: "#6366F1",
-    accentColorRgb: "99,102,241",
-    gradientFrom: "#6366F1",
-    gradientTo: "#8B5CF6",
-    badgeText: "10,000+ Components",
-    badgeBg: "bg-indigo-50 text-indigo-700 border-indigo-200",
-    workflow: ["Discover", "Preview", "Inspect", "Use"],
-    workflowIcons: [Grid3X3, Sparkles, Code2, ArrowRight],
-    ctaLabel: "Explore Components",
-    miniPreview: "components",
+    label: "Explore",
+    copy: "Browse components, templates, and design systems.",
+    badge: "10,000+ components",
+    Preview: ExplorePreview,
   },
   {
     id: "transform",
-    icon: Globe,
     emoji: "🌐",
-    label: "Transform Existing Website",
-    tagline: "Analyze, Improve & Transform",
-    description: "Import websites or GitHub repositories. Morphix analyzes your codebase, extracts design DNA, and generates AI-powered improvement reports.",
-    accentColor: "#8B5CF6",
-    accentColorRgb: "139,92,246",
-    gradientFrom: "#8B5CF6",
-    gradientTo: "#06B6D4",
-    badgeText: "GitHub & URL Import",
-    badgeBg: "bg-violet-50 text-violet-700 border-violet-200",
-    workflow: ["Import", "Analyze", "Improve", "Transform"],
-    workflowIcons: [Upload, Wand2, Sparkles, ArrowRight],
-    ctaLabel: "Analyze Website",
-    miniPreview: "transform",
+    label: "Transform",
+    copy: "Import any website and customize every detail with AI.",
+    badge: "Powered by 10,000+ components.",
+    Preview: TransformPreview,
   },
   {
     id: "create",
-    icon: Sparkles,
     emoji: "✨",
-    label: "Create New Project",
-    tagline: "Idea to Product",
-    description: "Start from an idea, screenshot, prompt, Figma file, or design inspiration. Build complete projects with AI in minutes.",
-    accentColor: "#06B6D4",
-    accentColorRgb: "6,182,212",
-    gradientFrom: "#06B6D4",
-    gradientTo: "#10B981",
-    badgeText: "5 Starting Modes",
-    badgeBg: "bg-cyan-50 text-cyan-700 border-cyan-200",
-    workflow: ["Idea", "AI", "Components", "Project"],
-    workflowIcons: [Sparkles, Wand2, Grid3X3, ArrowRight],
-    ctaLabel: "Create Project",
-    miniPreview: "create",
+    label: "Create",
+    copy: "Build entirely new websites from scratch.",
+    badge: "Powered by 10,000+ components.",
+    Preview: CreatePreview,
   },
 ];
 
-function ComponentsPreview() {
-  return (
-    <div className="w-full h-full bg-gradient-to-br from-slate-50 to-indigo-50/30 p-3 flex flex-col gap-2">
-      {/* search bar */}
-      <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-2.5 py-1.5">
-        <div className="w-3 h-3 rounded-full bg-slate-200" />
-        <div className="h-1.5 flex-1 rounded bg-slate-200" />
-        <div className="h-1.5 w-8 rounded bg-indigo-200" />
-      </div>
-      {/* category pills */}
-      <div className="flex gap-1.5 flex-wrap">
-        {["All", "Navbars", "Heroes", "Pricing"].map((cat, i) => (
-          <div key={cat} className={`px-2 py-0.5 rounded-lg text-[7px] font-bold ${i === 0 ? "bg-indigo-600 text-white" : "bg-white border border-slate-200 text-slate-500"}`}>
-            {cat}
-          </div>
-        ))}
-      </div>
-      {/* component grid */}
-      <div className="grid grid-cols-3 gap-1.5 flex-1">
-        {[
-          { bg: "from-blue-600 to-violet-700", label: "Hero" },
-          { bg: "from-slate-50 to-blue-50", label: "Nav", dark: true },
-          { bg: "from-indigo-50 to-violet-50", label: "Card", dark: true },
-          { bg: "from-teal-50 to-emerald-50", label: "Pricing", dark: true },
-          { bg: "from-rose-500 to-pink-600", label: "Auth" },
-          { bg: "from-amber-50 to-orange-50", label: "Form", dark: true },
-        ].map((c, i) => (
-          <div key={i} className={`bg-gradient-to-br ${c.bg} rounded-lg p-1.5 flex flex-col items-center justify-center gap-0.5 border ${c.dark ? "border-slate-200" : "border-transparent"}`}>
-            <div className={`h-2.5 w-2/3 rounded ${c.dark ? "bg-slate-300" : "bg-white/50"}`} />
-            <div className={`text-[6px] font-bold ${c.dark ? "text-slate-500" : "text-white/80"}`}>{c.label}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+interface ChooseStartingPointProps {
+  onCardClick?: (tab: "explore" | "transform" | "create") => void;
 }
 
-function TransformPreview() {
-  return (
-    <div className="w-full h-full bg-gradient-to-br from-slate-900 to-violet-950/80 p-3 flex flex-col gap-2">
-      {/* url import bar */}
-      <div className="flex items-center gap-1.5 bg-white/8 border border-white/10 rounded-xl px-2.5 py-1.5">
-        <GitBranch className="w-2.5 h-2.5 text-white/50 flex-shrink-0" />
-        <div className="text-[7px] font-mono text-white/50 flex-1">github.com/mysite</div>
-        <div className="px-1.5 py-0.5 bg-violet-600 text-white text-[6px] font-bold rounded-md">Import</div>
-      </div>
-      {/* analysis progress */}
-      <div className="bg-white/5 border border-white/8 rounded-xl p-2 space-y-1.5">
-        {["Scanning components", "Extracting colors", "Analyzing layout"].map((step, i) => (
-          <div key={step} className="flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full flex-shrink-0 ${i < 2 ? "bg-violet-400" : "bg-white/20"}`} />
-            <div className="h-1 flex-1 bg-white/10 rounded-full overflow-hidden">
-              <div className={`h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-400 transition-all`} style={{ width: i === 0 ? "100%" : i === 1 ? "70%" : "30%" }} />
-            </div>
-          </div>
-        ))}
-      </div>
-      {/* design dna output */}
-      <div className="flex gap-1.5 flex-1">
-        <div className="flex-1 bg-white/5 border border-white/8 rounded-xl p-1.5 flex flex-col gap-1">
-          <div className="text-[6px] font-bold text-violet-400 uppercase tracking-wider">Design DNA</div>
-          <div className="flex gap-0.5">
-            {["#6366F1", "#8B5CF6", "#06B6D4", "#10B981"].map(c => (
-              <div key={c} className="flex-1 h-3 rounded" style={{ backgroundColor: c }} />
-            ))}
-          </div>
-        </div>
-        <div className="flex-1 bg-white/5 border border-white/8 rounded-xl p-1.5 flex flex-col gap-1">
-          <div className="text-[6px] font-bold text-cyan-400 uppercase tracking-wider">AI Score</div>
-          <div className="text-sm font-black text-white">8.4</div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function CreatePreview() {
-  return (
-    <div className="w-full h-full bg-gradient-to-br from-cyan-50 to-teal-50/40 p-3 flex flex-col gap-2">
-      {/* prompt input */}
-      <div className="bg-white border border-slate-200 rounded-xl p-2 flex flex-col gap-1">
-        <div className="text-[7px] font-bold text-slate-700 leading-tight">
-          "Build a SaaS landing page with dark hero and pricing..."
-        </div>
-        <div className="h-px bg-slate-100" />
-        <div className="flex gap-1 flex-wrap">
-          {[Camera, FileText, Palette].map((Icon, i) => (
-            <div key={i} className="flex items-center gap-0.5 px-1.5 py-0.5 bg-slate-50 border border-slate-200 rounded-md">
-              <Icon className="w-2 h-2 text-slate-400" />
-              <span className="text-[6px] text-slate-500">{["Screenshot", "Figma", "Prompt"][i]}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-      {/* generated preview */}
-      <div className="flex-1 bg-gradient-to-br from-cyan-600 to-teal-600 rounded-xl p-2 flex flex-col gap-1">
-        <div className="flex items-center justify-between">
-          <div className="h-1.5 w-8 rounded bg-white/40" />
-          <div className="h-3 w-10 bg-white/20 rounded-md" />
-        </div>
-        <div className="h-3 w-3/4 rounded bg-white/30" />
-        <div className="h-2 w-full rounded bg-white/15" />
-        <div className="grid grid-cols-3 gap-1 mt-0.5">
-          {[0, 1, 2].map(i => (
-            <div key={i} className="h-5 rounded-lg bg-white/10 border border-white/10" />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-const previewMap = {
-  components: ComponentsPreview,
-  transform: TransformPreview,
-  create: CreatePreview,
-};
-
-export default function ChooseStartingPoint() {
+export default function ChooseStartingPoint({ onCardClick }: ChooseStartingPointProps) {
+  const { ref, inView } = useInView(0.15);
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
   return (
-    <section id="starting-points" className="py-20 lg:py-28 section-light-soft relative border-t border-slate-100/80">
-      <div className="absolute inset-0 dot-grid-subtle opacity-60 pointer-events-none" />
+    <section
+      ref={ref as any}
+      id="starting-points"
+      className="relative border-t"
+      style={{ background: "#050816", borderColor: "rgba(255,255,255,0.06)", paddingTop: "7rem", paddingBottom: "7rem" }}
+    >
+      {/* Subtle blue top glow */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: "radial-gradient(ellipse 60% 30% at 50% 0%, rgba(59,130,246,0.04) 0%, transparent 65%)",
+      }} />
 
-      {/* Decorative orbs */}
-      <div className="absolute top-10 left-1/4 w-96 h-96 rounded-full bg-indigo-100/60 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 right-1/4 w-96 h-96 rounded-full bg-violet-100/40 blur-3xl pointer-events-none" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-200 mb-5">
-            <Sparkles className="w-3.5 h-3.5" />
-            Three Ways to Use Morphix
-          </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4 leading-tight">
-            Choose Your{" "}
-            <span className="gradient-text-violet">
-              Starting Point
-            </span>
+        {/* Section header */}
+        <div
+          className="text-center max-w-2xl mx-auto mb-16"
+          style={{
+            opacity: inView ? 1 : 0,
+            transform: inView ? "translateY(0)" : "translateY(20px)",
+            transition: "opacity 600ms cubic-bezier(0.16,1,0.3,1), transform 600ms cubic-bezier(0.16,1,0.3,1)",
+          }}
+        >
+          <h2
+            className="text-white tracking-tight mb-4 leading-tight"
+            style={{ fontSize: "clamp(2.2rem,5vw,3.5rem)", fontWeight: 300 }}
+          >
+            Choose Your Starting Point
           </h2>
-          <p className="text-slate-500 text-base sm:text-lg leading-relaxed">
-            Whether you&apos;re exploring components, transforming an existing site, or building from scratch —
-            Morphix adapts to your workflow.
+          <p className="text-base sm:text-lg" style={{ color: "rgba(255,255,255,0.38)", fontWeight: 400 }}>
+            Three ways to enter Morphix. One evolving workspace.
           </p>
         </div>
 
-        {/* Three Premium Entry Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {entryCards.map((card) => {
-            const PreviewComponent = previewMap[card.miniPreview as keyof typeof previewMap];
+        {/* Three cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {CARDS.map((card, cardIdx) => {
             const isHovered = hoveredCard === card.id;
-
+            const Preview = card.Preview;
             return (
               <div
                 key={card.id}
+                onClick={() => onCardClick?.(card.id as "explore" | "transform" | "create")}
                 onMouseEnter={() => setHoveredCard(card.id)}
                 onMouseLeave={() => setHoveredCard(null)}
-                className="entry-card group flex flex-col"
+                className="relative rounded-2xl overflow-hidden cursor-pointer flex flex-col"
                 style={{
+                  background: isHovered
+                    ? "linear-gradient(145deg, rgba(11,16,32,1) 0%, rgba(9,13,26,1) 100%)"
+                    : "#0B1020",
+                  border: isHovered ? "1px solid rgba(59,130,246,0.30)" : "1px solid rgba(255,255,255,0.06)",
+                  transform: isHovered ? "translateY(-3px)" : "translateY(0)",
+                  transition: "all 0.25s cubic-bezier(0.16,1,0.3,1)",
                   boxShadow: isHovered
-                    ? `0 24px 80px rgba(${card.accentColorRgb},0.2), 0 8px 24px rgba(0,0,0,0.10)`
-                    : undefined,
-                  borderColor: isHovered ? `rgba(${card.accentColorRgb},0.3)` : undefined,
+                    ? "0 20px 60px rgba(0,0,0,0.50), 0 0 0 1px rgba(59,130,246,0.10), 0 0 40px rgba(59,130,246,0.08)"
+                    : "0 4px 16px rgba(0,0,0,0.30)",
+                  opacity: inView ? 1 : 0,
+                  transitionDelay: inView ? `${cardIdx * 80}ms` : "0ms",
                 }}
               >
-                {/* Top section */}
-                <div className="p-7 pb-5 flex-1">
-                  {/* Icon + Badge row */}
-                  <div className="flex items-start justify-between mb-5">
+                {/* Blue top edge accent on hover */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0, left: "10%", right: "10%",
+                    height: "1px",
+                    background: "linear-gradient(90deg, transparent, rgba(59,130,246,0.50), transparent)",
+                    opacity: isHovered ? 1 : 0,
+                    transition: "opacity 0.25s ease",
+                  }}
+                />
+
+                {/* Visual — preview area */}
+                <div
+                  className="rounded-xl overflow-hidden mx-4 mt-4 transition-all duration-300"
+                  style={{
+                    height: "240px",
+                    border: isHovered ? "1px solid rgba(59,130,246,0.18)" : "1px solid rgba(255,255,255,0.06)",
+                    boxShadow: isHovered ? "0 0 20px rgba(59,130,246,0.10) inset" : "none",
+                  }}
+                >
+                  <Preview />
+                </div>
+
+                {/* Label + copy */}
+                <div className="px-5 py-5 mt-auto flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">{card.emoji}</span>
                     <div
-                      className="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg transition-transform duration-300 group-hover:scale-110"
-                      style={{ background: `linear-gradient(135deg, ${card.gradientFrom}, ${card.gradientTo})` }}
+                      className="tracking-tight"
+                      style={{ fontSize: "1.15rem", fontWeight: 500, color: isHovered ? "rgba(255,255,255,0.98)" : "rgba(255,255,255,0.88)", transition: "color 0.2s ease" }}
                     >
-                      <card.icon className="w-5 h-5" />
+                      {card.label}
                     </div>
-                    <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${card.badgeBg}`}>
-                      {card.badgeText}
+                  </div>
+                  <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.40)", fontWeight: 400 }}>
+                    {card.copy}
+                  </p>
+                  {/* Bottom badge */}
+                  <div className="mt-1 pt-3 border-t flex items-center justify-between" style={{ borderColor: "rgba(59,130,246,0.08)" }}>
+                    <span className="text-[10px] font-mono" style={{ color: isHovered ? "rgba(147,197,253,0.55)" : "rgba(255,255,255,0.22)", transition: "color 0.2s ease" }}>
+                      {card.badge}
+                    </span>
+                    <span
+                      className="text-[11px] font-semibold transition-all duration-200"
+                      style={{
+                        color: isHovered ? "#3B82F6" : "rgba(255,255,255,0.22)",
+                        transform: isHovered ? "translateX(2px)" : "translateX(0)",
+                      }}
+                    >
+                      Open →
                     </span>
                   </div>
-
-                  <h3 className="text-xl font-black text-slate-900 mb-1.5 leading-tight">{card.label}</h3>
-                  <p className="text-xs font-semibold mb-3" style={{ color: card.accentColor }}>{card.tagline}</p>
-                  <p className="text-slate-500 text-sm leading-relaxed mb-5">{card.description}</p>
-
-                  {/* Mini workflow indicator */}
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    {card.workflow.map((step, i) => (
-                      <div key={step} className="flex items-center gap-1.5">
-                        <div
-                          className="px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all duration-300"
-                          style={{
-                            background: isHovered ? `rgba(${card.accentColorRgb},0.1)` : "#f8f9fa",
-                            color: isHovered ? card.accentColor : "#64748b",
-                            border: `1px solid ${isHovered ? `rgba(${card.accentColorRgb},0.2)` : "#e8eaef"}`,
-                          }}
-                        >
-                          {step}
-                        </div>
-                        {i < card.workflow.length - 1 && (
-                          <div className="w-3 h-px rounded" style={{ backgroundColor: isHovered ? card.accentColor : "#e2e8f0" }} />
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Mini Preview */}
-                <div className="mx-5 mb-5 rounded-2xl overflow-hidden h-[160px] border border-slate-200/80 shadow-sm transition-all duration-300 group-hover:shadow-md"
-                  style={{ borderColor: isHovered ? `rgba(${card.accentColorRgb},0.2)` : undefined }}
-                >
-                  <PreviewComponent />
-                </div>
-
-                {/* CTA Button */}
-                <div className="px-7 pb-7">
-                  <button
-                    className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold transition-all duration-300 cursor-pointer group/btn"
-                    style={{
-                      background: isHovered
-                        ? `linear-gradient(135deg, ${card.gradientFrom}, ${card.gradientTo})`
-                        : "transparent",
-                      color: isHovered ? "#ffffff" : card.accentColor,
-                      border: `1.5px solid ${isHovered ? "transparent" : `rgba(${card.accentColorRgb},0.3)`}`,
-                      boxShadow: isHovered ? `0 8px 24px rgba(${card.accentColorRgb},0.35)` : "none",
-                    }}
-                  >
-                    {card.ctaLabel}
-                    <ArrowRight className={`w-4 h-4 transition-transform duration-300 ${isHovered ? "translate-x-1" : ""}`} />
-                  </button>
                 </div>
               </div>
             );
           })}
-        </div>
-
-        {/* Bottom connector text */}
-        <div className="text-center mt-12">
-          <p className="text-sm text-slate-400 font-medium">
-            All three paths lead into the same Morphix workspace
-            <span className="mx-2">·</span>
-            <span className="text-indigo-500 font-semibold">Switch anytime</span>
-          </p>
         </div>
       </div>
     </section>

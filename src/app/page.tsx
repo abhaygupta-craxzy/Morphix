@@ -1,42 +1,55 @@
-import Navbar                    from "@/components/landing/Navbar";
-import HeroSection                from "@/components/landing/HeroSection";
-import ChooseStartingPoint        from "@/components/landing/ChooseStartingPoint";
-import LiveTransformationWall     from "@/components/landing/LiveTransformationWall";
-import AnalyzeWorkflowSection     from "@/components/landing/AnalyzeWorkflowSection";
-import TransformationShowcaseSection from "@/components/landing/TransformationShowcaseSection";
-import ComponentIntelligenceSection from "@/components/landing/ComponentIntelligenceSection";
-import CTASection                 from "@/components/landing/CTASection";
-import Footer                     from "@/components/landing/Footer";
+"use client";
+
+import { useState, useRef } from "react";
+import Navbar from "@/components/landing/Navbar";
+import HeroSection from "@/components/landing/HeroSection";
+import ChooseStartingPoint from "@/components/landing/ChooseStartingPoint";
+import WatchMorphixWork from "@/components/landing/WatchMorphixWork";
+import MetricsStrip from "@/components/landing/MetricsStrip";
+import ExploreMorphix from "@/components/landing/ExploreMorphix";
+import CTASection from "@/components/landing/CTASection";
+import Footer from "@/components/landing/Footer";
+
+export type ExploreTab = "explore" | "transform" | "create";
 
 export default function Home() {
+  const [activeExploreTab, setActiveExploreTab] = useState<ExploreTab>("explore");
+  const exploreRef = useRef<HTMLElement>(null);
+
+  function goToExplore(tab: ExploreTab) {
+    setActiveExploreTab(tab);
+    setTimeout(() => {
+      exploreRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
+  }
+
   return (
-    <div className="flex flex-col min-h-screen bg-[#07070f]">
-      <Navbar />
+    <div className="flex flex-col min-h-screen" style={{ background: "#050816" }}>
+      <Navbar onOpenWorkspace={() => goToExplore("explore")} />
       <main className="flex-1">
+        {/* 01 — Hero */}
+        <HeroSection onPillClick={goToExplore} />
 
-        {/* 1. HERO — Dark premium. Workspace dominant. Clear value prop. */}
-        <HeroSection />
+        {/* 02 — Choose Your Starting Point */}
+        <ChooseStartingPoint onCardClick={goToExplore} />
 
-        {/* 2. CHOOSE YOUR STARTING POINT — Light. Three equal entry doors. */}
-        <ChooseStartingPoint />
+        {/* 03 — Watch Morphix Work (cinematic transformation) */}
+        <WatchMorphixWork />
 
-        {/* 3. WATCH WEBSITES TRANSFORM LIVE — Dark. Infinite transformation wall. */}
-        <LiveTransformationWall />
+        {/* 04 — Metrics Strip (credibility after the demo) */}
+        <MetricsStrip />
 
-        {/* 4. ANALYZE. UNDERSTAND. TRANSFORM. — Dark purple. Merged workflow + Design DNA. */}
-        <AnalyzeWorkflowSection />
+        {/* 05 — One Workspace. Three Workflows. */}
+        <ExploreMorphix
+          ref={exploreRef}
+          activeTab={activeExploreTab}
+          onTabChange={setActiveExploreTab}
+        />
 
-        {/* 5. PICK A STYLE. SEE THE TRANSFORMATION. — Dark. Merged drag slider + style selector. */}
-        <TransformationShowcaseSection />
-
-        {/* 6. COMPONENT ECOSYSTEM — Light. Scrolling columns + theme sandbox. */}
-        <ComponentIntelligenceSection />
-
-        {/* 7. CHOOSE YOUR PATH — Dark premium. Final three-gateway CTA. */}
-        <CTASection />
-
+        {/* 06 — Final CTA */}
+        <CTASection onOpen={() => goToExplore("explore")} />
       </main>
-      <Footer />
+      <Footer onNavClick={goToExplore} />
     </div>
   );
 }
