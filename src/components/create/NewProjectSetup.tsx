@@ -304,7 +304,7 @@ function EnergyFlow() {
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.x += p.speed;
-        p.opacity -= 0.0012;
+        p.opacity -= 0.0016;
         
         // Gentle flow motion
         p.y += p.speedY;
@@ -316,10 +316,16 @@ function EnergyFlow() {
 
         ctx.beginPath();
         ctx.fillStyle = `rgba(96, 165, 250, ${p.opacity})`;
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = 6; /* Reduced from 8 to save GPU */
         ctx.shadowColor = `rgba(59, 130, 246, ${p.opacity})`;
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        /* Use Math.floor for coordinates to avoid sub-pixel anti-aliasing lag */
+        ctx.arc(Math.floor(p.x), Math.floor(p.y), p.size, 0, Math.PI * 2);
         ctx.fill();
+      }
+
+      /* Strict limit on particle count to prevent memory/GPU build up */
+      while (particles.length > 100) {
+        particles.shift();
       }
 
       frame = requestAnimationFrame(draw);
