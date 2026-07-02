@@ -16,6 +16,7 @@ import {
   ShoppingBag,
   Sparkles,
   Zap,
+  Box,
 } from "lucide-react";
 import styles from "./NewProjectSetup.module.css";
 
@@ -55,6 +56,12 @@ const WEBSITE_TYPES = [
     tone: "cyan",
   },
   {
+    label: "Components",
+    description: "UI elements & design systems",
+    icon: Box,
+    tone: "rose",
+  },
+  {
     label: "Blog",
     description: "Editorial & content hubs",
     icon: BookOpen,
@@ -74,6 +81,7 @@ const SCOPE_BY_TYPE: Record<string, string> = {
   Portfolio: "Full Website",
   SaaS: "Full Website",
   "E-commerce": "Full Website",
+  Components: "UI Elements",
   Blog: "Full Website",
   Custom: "Flexible Project",
 };
@@ -103,6 +111,11 @@ const PREVIEW_COPY: Record<string, { eyebrow: string; title: string; copy: strin
     eyebrow: "NEW COLLECTION",
     title: "A storefront people want to explore.",
     copy: "Turn products into an elegant, frictionless shopping journey.",
+  },
+  Components: {
+    eyebrow: "MODULAR DESIGN",
+    title: "Build with beautiful, reusable blocks.",
+    copy: "A comprehensive library of components for your next big idea.",
   },
   Blog: {
     eyebrow: "LATEST STORIES",
@@ -179,12 +192,12 @@ function CometTrail() {
           vx: -directionX * (0.45 + Math.random() * 1.1) - directionY * spread,
           vy: -directionY * (0.45 + Math.random() * 1.1) + directionX * spread,
           life: 1,
-          size: 1.1 + Math.random() * 2.1,
+          size: 2.5 + Math.random() * 3.5,
           hue: trailHues[Math.floor(Math.random() * trailHues.length)],
         });
       }
 
-      if (particles.length > 56) particles.splice(0, particles.length - 56);
+      if (particles.length > 120) particles.splice(0, particles.length - 120);
       lastX = pointerX;
       lastY = pointerY;
       lastSpawnAt = now;
@@ -199,13 +212,17 @@ function CometTrail() {
       context.clearRect(0, 0, window.innerWidth, window.innerHeight);
       context.globalCompositeOperation = "lighter";
 
+      if (particles.length === 0) {
+        isAnimating = false;
+      }
+
       for (let index = particles.length - 1; index >= 0; index -= 1) {
         const particle = particles[index];
         particle.x += particle.vx;
         particle.y += particle.vy;
         particle.vx *= 0.94;
         particle.vy *= 0.94;
-        particle.life -= 0.072;
+        particle.life -= 0.035;
 
         if (particle.life <= 0) {
           particles.splice(index, 1);
@@ -215,7 +232,7 @@ function CometTrail() {
         const alpha = particle.life * 0.68;
         context.beginPath();
         context.fillStyle = `hsla(${particle.hue}, 95%, 68%, ${alpha})`;
-        context.shadowBlur = 9 * particle.life;
+        context.shadowBlur = 4 * particle.life;
         context.shadowColor = `hsla(${particle.hue}, 100%, 70%, ${alpha})`;
         context.arc(particle.x, particle.y, particle.size * particle.life, 0, Math.PI * 2);
         context.fill();
@@ -241,6 +258,82 @@ function CometTrail() {
   }, []);
 
   return <canvas ref={canvasRef} className={styles.cometCanvas} aria-hidden="true" />;
+}
+
+// Blue Energy Flow Background Effect
+function EnergyFlow() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let frame = 0;
+    const particles: { x: number; y: number; speed: number; speedY: number; size: number; opacity: number }[] = [];
+    
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    const spawnParticle = () => {
+      // Spawn particles near the left-center (blueprint) and move them to the right (form)
+      particles.push({
+        x: canvas.width * 0.1 + Math.random() * canvas.width * 0.2,
+        y: canvas.height * 0.1 + Math.random() * canvas.height * 0.8,
+        speed: 0.5 + Math.random() * 2,
+        speedY: (Math.random() - 0.5) * 0.3,
+        size: 0.5 + Math.random() * 3.5,
+        opacity: Math.random() * 0.8 + 0.2
+      });
+    };
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      if (Math.random() < 0.25) spawnParticle();
+      if (Math.random() < 0.25) spawnParticle();
+      if (Math.random() < 0.1) spawnParticle();
+
+      ctx.globalCompositeOperation = "lighter";
+      
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.speed;
+        p.opacity -= 0.0012;
+        
+        // Gentle flow motion
+        p.y += p.speedY;
+
+        if (p.opacity <= 0 || p.x > canvas.width * 0.95) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(96, 165, 250, ${p.opacity})`;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = `rgba(59, 130, 246, ${p.opacity})`;
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      frame = requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", resize);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className={styles.energyCanvas} aria-hidden="true" />;
 }
 
 function BlueprintPreview({ projectName, type }: { projectName: string; type: string }) {
@@ -384,114 +477,130 @@ export default function NewProjectSetup({ onCreate }: NewProjectSetupProps) {
 
   return (
     <div className={styles.overlay}>
+      {/* 5 Depth Layers Implementation */}
+      <div className={styles.gridAnimated} aria-hidden="true" /> {/* Layer 1: Animated Background Grid */}
+      <EnergyFlow /> {/* Layer 2: Energy Particles */}
       <CometTrail />
+      
       <div className={styles.ambientOne} aria-hidden="true" />
       <div className={styles.ambientTwo} aria-hidden="true" />
-      <div className={styles.grid} aria-hidden="true" />
 
       <main className={styles.shell}>
-        <BlueprintPreview projectName={name} type={type} />
+        <BlueprintPreview projectName={name} type={type} /> {/* Layer 3: Website Preview + Layer 4: AI Cards inside */}
+
+        <div className={styles.panelSeparator} aria-hidden="true" />
 
         <section className={styles.setupPanel} aria-labelledby="project-blueprint-title">
-          <div className={styles.panelGlow} aria-hidden="true" />
-          <div className={styles.setupHeader}>
-            <div className={styles.brandMark}><Layers3 size={20} /></div>
-            <button type="button" onClick={submitProject} className={styles.quickStart}>
-              Quick start <ArrowRight size={13} />
-            </button>
-          </div>
-
-          <div className={styles.intro}>
-            <div className={styles.kicker}>PROJECT BLUEPRINT</div>
-            <h1 id="project-blueprint-title">Let&apos;s build something <span>great.</span></h1>
-            <p>Create your project. You&apos;ll design everything inside Create Studio.</p>
-            <div className={styles.setupTime}><Clock3 size={14} /> Less than 10 seconds</div>
-          </div>
-
-          <div className={styles.formSection}>
-            <div className={styles.sectionHeading}>
-              <div><span>01</span><h2>Project name</h2></div>
-              <p>Give your project a name. You can rename it anytime.</p>
-            </div>
-            <label className={styles.srOnly} htmlFor="project-name">Project name</label>
-            <input
-              id="project-name"
-              data-testid="project-name"
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") submitProject();
-              }}
-              placeholder="My Startup Website"
-              autoComplete="off"
-              className={styles.nameInput}
-            />
-          </div>
-
-          <div className={styles.formSection}>
-            <div className={styles.sectionHeading}>
-              <div><span>02</span><h2>What are you building?</h2></div>
-              <p>We&apos;ll choose the right page structure automatically.</p>
+          <div className={styles.panelContent}> {/* Wrap content to stay above blueprint lines */}
+            <div className={styles.panelGlow} aria-hidden="true" />
+            <div className={styles.setupHeader}>
+              <div className={styles.brandMark}><Layers3 size={20} /></div>
+              <button type="button" onClick={submitProject} className={styles.quickStart}>
+                Quick start <ArrowRight size={13} />
+              </button>
             </div>
 
-            <div className={styles.typeGrid} role="radiogroup" aria-label="Website type">
-              {WEBSITE_TYPES.map((item) => {
-                const Icon = item.icon;
-                const selected = type === item.label;
-                const toneClass = styles[`type${item.tone[0].toUpperCase()}${item.tone.slice(1)}`];
-                return (
-                  <button
-                    key={item.label}
-                    type="button"
-                    role="radio"
-                    aria-checked={selected}
-                    data-testid={`type-${item.label.toLowerCase().replaceAll(" ", "-")}`}
-                    onClick={() => setType(item.label)}
-                    className={`${styles.typeCard} ${toneClass} ${selected ? styles.typeCardSelected : ""}`}
-                  >
-                    <span className={styles.typeIcon}><Icon size={17} strokeWidth={1.8} /></span>
-                    <span className={styles.typeCopy}><strong>{item.label}</strong><small>{item.description}</small></span>
-                    <span className={styles.checkMark}><Check size={12} strokeWidth={3} /></span>
-                  </button>
-                );
-              })}
+            <div className={styles.intro}>
+              <div className={styles.kicker}>PROJECT BLUEPRINT</div>
+              <h1 id="project-blueprint-title">Let&apos;s build something <span>great.</span></h1>
+              <p>Create your project. You&apos;ll design everything inside Create Studio.</p>
+              <div className={styles.setupTime}><Clock3 size={14} /> Less than 10 seconds</div>
             </div>
 
-            {type === "Custom" && (
-              <input
-                value={customType}
-                onChange={(event) => setCustomType(event.target.value)}
-                placeholder="Describe what you're building"
-                aria-label="Custom website type"
-                className={styles.customInput}
-                autoFocus
-              />
-            )}
-          </div>
-
-          <div className={styles.nextSection}>
-            <div className={styles.nextTitle}><span>03</span><h2>What happens next</h2></div>
-            <div className={styles.steps}>
-              {[
-                "Open Create Studio",
-                "Describe your idea",
-                "Watch AI build it live",
-              ].map((step, index) => (
-                <div className={styles.step} key={step}>
-                  <span>{index + 1}</span>
-                  <p>{step}</p>
+            <div className={styles.formContainer}>
+              <div className={styles.formSectionGroup}>
+                <div className={styles.sectionHeadingHierarchical}>
+                  <div className={styles.sectionLabel}>PROJECT NAME</div>
+                  <p>Give your project a name. You can rename it anytime.</p>
                 </div>
-              ))}
+                <label className={styles.srOnly} htmlFor="project-name">Project name</label>
+                <input
+                  id="project-name"
+                  data-testid="project-name"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") submitProject();
+                  }}
+                  placeholder="My Startup Website"
+                  autoComplete="off"
+                  className={styles.nameInput}
+                />
+              </div>
+
+              <div className={styles.formSectionDivider} aria-hidden="true" />
+
+              <div className={styles.formSectionGroup}>
+                <div className={styles.sectionHeadingHierarchical}>
+                  <div className={styles.sectionLabel}>PROJECT TYPE</div>
+                  <p>We&apos;ll choose the right page structure automatically.</p>
+                </div>
+
+                <div className={styles.typeGrid} role="radiogroup" aria-label="Website type">
+                  {WEBSITE_TYPES.map((item) => {
+                    const Icon = item.icon;
+                    const selected = type === item.label;
+                    const toneClass = styles[`type${item.tone[0].toUpperCase()}${item.tone.slice(1)}`];
+                    return (
+                      <button
+                        key={item.label}
+                        type="button"
+                        role="radio"
+                        aria-checked={selected}
+                        data-testid={`type-${item.label.toLowerCase().replaceAll(" ", "-")}`}
+                        onClick={() => setType(item.label)}
+                        className={`${styles.typeCard} ${toneClass} ${selected ? styles.typeCardSelected : ""}`}
+                      >
+                        <span className={styles.typeIcon}><Icon size={17} strokeWidth={1.8} /></span>
+                        <span className={styles.typeCopy}><strong>{item.label}</strong><small>{item.description}</small></span>
+                        <span className={styles.checkMark}><Check size={12} strokeWidth={3} /></span>
+                        <div className={styles.typeCardBorder} aria-hidden="true" /> {/* Hover border animation */}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {type === "Custom" && (
+                  <input
+                    value={customType}
+                    onChange={(event) => setCustomType(event.target.value)}
+                    placeholder="Describe what you're building"
+                    aria-label="Custom website type"
+                    className={styles.customInput}
+                    autoFocus
+                  />
+                )}
+              </div>
+
+              <div className={styles.formSectionDivider} aria-hidden="true" />
+
+              <div className={styles.formSectionGroup}>
+                <div className={styles.sectionHeadingHierarchical}>
+                  <div className={styles.sectionLabel}>NEXT STEPS</div>
+                </div>
+                <div className={styles.steps}>
+                  {[
+                    "Open Create Studio",
+                    "Describe your idea",
+                    "Watch AI build it live",
+                  ].map((step, index) => (
+                    <div className={styles.step} key={step}>
+                      <span>{index + 1}</span>
+                      <p>{step}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
+
+            <button type="button" data-testid="continue-create-studio" onClick={submitProject} className={styles.continueButton}>
+              <span>Continue to Create Studio</span>
+              <ArrowRight size={17} />
+              <i aria-hidden="true" />
+            </button>
+
+            <p className={styles.defaultHint}>Not sure yet? Quick start uses smart defaults.</p>
           </div>
-
-          <button type="button" data-testid="continue-create-studio" onClick={submitProject} className={styles.continueButton}>
-            <span>Continue to Create Studio</span>
-            <ArrowRight size={17} />
-            <i aria-hidden="true" />
-          </button>
-
-          <p className={styles.defaultHint}>Not sure yet? Quick start uses smart defaults.</p>
         </section>
       </main>
     </div>
