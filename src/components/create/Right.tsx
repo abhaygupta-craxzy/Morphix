@@ -1,12 +1,19 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { 
-  Sparkles, 
+import {
+  Sparkles,
   Link2,
   Upload,
-  RefreshCw
+  RefreshCw,
+  ChevronRight,
+  Clock,
+  Layers,
+  CheckCircle,
+  Layout,
+  Wand2,
 } from "lucide-react";
+import Link from "next/link";
 import { ProjectData, GenerationStatus } from "@/app/create/page";
 
 interface RightProps {
@@ -14,23 +21,37 @@ interface RightProps {
   setProjectData: React.Dispatch<React.SetStateAction<ProjectData>>;
   generationStatus: GenerationStatus;
   onGenerate: () => void;
+  onGenerateAgain: () => void;
+  timeTaken: number;
+  sectionsCount: number;
+  setIsPromptFocused: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Right({ 
-  projectData, 
-  setProjectData, 
+// Quick-fill example prompts
+const EXAMPLE_PROMPTS = [
+  { label: "Amazon clone", prompt: "Create a modern Amazon-style marketplace. Dark theme. Large search bar. Product grid. Categories sidebar. Minimal animations. Professional and responsive." },
+  { label: "SaaS Landing", prompt: "Create a modern SaaS landing page with glassmorphism. Dark theme. Blue and purple gradients. Hero section, features grid, pricing plans, and footer." },
+  { label: "Portfolio", prompt: "Create a minimal developer portfolio. Dark background. Hero with name and role, skills section, featured projects grid, and contact form. Clean and modern." },
+  { label: "Fintech App", prompt: "Create a premium fintech dashboard landing page. Dark green and black theme. Hero with stats, feature cards with icons, and a clean pricing section." },
+  { label: "E-commerce Store", prompt: "Create a modern electronics e-commerce store. Dark theme. Hero banner with deals, product category grid, featured products section, and newsletter footer." },
+];
+
+export default function Right({
+  projectData,
+  setProjectData,
   generationStatus,
-  onGenerate 
+  onGenerate,
+  onGenerateAgain,
+  timeTaken,
+  sectionsCount,
+  setIsPromptFocused,
 }: RightProps) {
-  const [activeTab, setActiveTab] = useState<"prompt" | "references" | "components" | "brief">("prompt");
+  const [activeTab, setActiveTab] = useState<"prompt" | "references" | "components" | "brief" >("prompt");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setProjectData((prev) => ({
-        ...prev,
-        logo: e.target.files![0]
-      }));
+    if (e.target.files?.[0]) {
+      setProjectData((prev) => ({ ...prev, logo: e.target.files![0] }));
     }
   };
 
@@ -42,60 +63,136 @@ export default function Right({
   };
 
   const isCompleted = generationStatus === "completed";
+  const isGenerating = generationStatus === "generating";
+  const isIdle = generationStatus === "idle";
+  const isError = generationStatus === "error";
+
+  const canGenerate = !!projectData.prompt.trim() && !isGenerating;
+
+  const TABS = ["prompt", "references", "components", "brief"] as const;
+  const TAB_LABELS: Record<typeof TABS[number], string> = {
+    prompt: "Prompt",
+    references: "Refs",
+    components: "Parts",
+    brief: "Brief",
+  };
 
   return (
     <aside
-      className="w-[330px] border-l flex flex-col h-full bg-[#080c18] z-10 relative flex-shrink-0"
-      style={{ borderColor: "rgba(255, 255, 255, 0.06)" }}
+      className="w-[280px] flex flex-col h-full bg-[#0C0F18] z-10 relative flex-shrink-0"
+      style={{ borderLeft: "1px solid rgba(255, 255, 255, 0.03)" }}
     >
-      {/* Mini Tabs Header (Clean tab-only layout, no grand header title) */}
-      <div className="grid grid-cols-4 gap-1 p-2 border-b border-white/[0.04] bg-white/[0.01]">
-        {(["prompt", "references", "components", "brief"] as const).map((tab) => (
+      {/* Tab header */}
+      <div
+        className="grid grid-cols-4 gap-1 p-2 border-b border-white/[0.03] bg-white/[0.01]"
+      >
+        {TABS.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className="py-2.5 text-[9px] font-bold uppercase tracking-wider rounded-lg transition-all text-center"
+            className="py-2 text-[9px] font-bold uppercase tracking-wider rounded-lg transition-all"
             style={{
-              background: activeTab === tab ? "rgba(59,130,246,0.08)" : "transparent",
-              color: activeTab === tab ? "#93C5FD" : "rgba(255, 255, 255, 0.35)",
-              cursor: "pointer"
+              background: activeTab === tab ? "rgba(59,130,246,0.06)" : "transparent",
+              color: activeTab === tab ? "#93C5FD" : "rgba(255,255,255,0.3)",
+              border: activeTab === tab ? "1px solid rgba(59,130,246,0.12)" : "1px solid transparent",
+              cursor: "pointer",
             }}
           >
-            {tab}
+            {TAB_LABELS[tab]}
           </button>
         ))}
       </div>
 
-      {/* Main Tab Content Wrapper */}
+      {/* Scrollable content */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs" style={{ scrollbarWidth: "none" }}>
-        
-        {/* 1. Prompt Tab */}
+
+        {/* ── PROMPT TAB ── */}
         {activeTab === "prompt" && (
-          <div className="space-y-4 h-full flex flex-col justify-between">
-            <div className="space-y-2">
-              <label className="text-[10px] text-white/40 uppercase tracking-widest font-bold">Describe Your Idea</label>
-              <textarea
-                rows={10}
-                value={projectData.prompt}
-                onChange={(e) => setProjectData({ ...projectData, prompt: e.target.value })}
-                placeholder="E.g. Create a modern AI SaaS landing page. Glass theme. Blue palette. Include Pricing and Testimonials."
-                className="w-full bg-white/[0.02] border border-white/[0.08] rounded-xl p-3 text-xs text-white placeholder-white/20 focus:outline-none focus:border-blue-500/50 transition-all resize-none font-medium leading-relaxed"
-              />
+          <div className="space-y-3.5 flex flex-col h-full">
+            <label className="text-[9px] text-white/35 uppercase tracking-widest font-extrabold flex items-center gap-1.5">
+              <Wand2 size={10} className="text-blue-400" />
+              Describe Your Idea
+            </label>
+
+            <textarea
+              rows={8}
+              value={projectData.prompt}
+              onChange={(e) => setProjectData({ ...projectData, prompt: e.target.value })}
+              onFocus={() => setIsPromptFocused(true)}
+              onBlur={() => setIsPromptFocused(false)}
+              placeholder="E.g. Create a modern Amazon-style marketplace. Dark theme. Large search bar. Product grid with categories. Minimal animations. Professional and responsive."
+              className="w-full rounded-xl p-3 text-xs text-white placeholder-white/20 focus:outline-none transition-all resize-none font-medium leading-relaxed"
+              style={{
+                background: "rgba(255,255,255,0.015)",
+                border: "1px solid rgba(255,255,255,0.06)",
+                boxShadow: "inset 0 1px 2px rgba(0,0,0,0.4)"
+              }}
+            />
+
+            {/* Character count */}
+            <div className="flex items-center justify-between">
+              <span className="text-[9px] text-white/20">
+                {projectData.prompt.length} chars
+              </span>
+              {projectData.prompt.length > 20 && (
+                <span className="text-[9px] text-[#34D399] font-bold">✓ Ready to generate</span>
+              )}
             </div>
-            
-            <div className="p-3.5 rounded-xl bg-blue-500/[0.02] border border-blue-500/10 text-white/50 text-[11px] leading-relaxed">
-              💡 Your prompt directly influences color palettes, copy layout, typography metrics, and spacing systems.
+
+            {/* Example prompts */}
+            <div className="space-y-2 mt-1">
+              <p className="text-[9px] text-white/25 uppercase tracking-widest font-extrabold">
+                Quick Examples
+              </p>
+              <div className="space-y-1.5">
+                {EXAMPLE_PROMPTS.map((ex) => (
+                  <button
+                    key={ex.label}
+                    onClick={() => setProjectData({ ...projectData, prompt: ex.prompt })}
+                    className="w-full text-left flex items-center gap-2 px-3 py-2 rounded-xl transition-all group"
+                    style={{
+                      background: "rgba(255,255,255,0.015)",
+                      border: "1px solid rgba(255,255,255,0.04)",
+                      cursor: "pointer",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "rgba(59,130,246,0.06)";
+                      e.currentTarget.style.borderColor = "rgba(59,130,246,0.18)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "rgba(255,255,255,0.015)";
+                      e.currentTarget.style.borderColor = "rgba(255,255,255,0.04)";
+                    }}
+                  >
+                    <Sparkles size={9} className="text-blue-400/60 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                    <span className="text-[10px] font-bold text-white/50 group-hover:text-white/80 transition-colors flex-1">
+                      {ex.label}
+                    </span>
+                    <ChevronRight size={10} className="text-white/20 group-hover:text-blue-400/60 transition-colors" />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Hint */}
+            <div
+              className="p-3 rounded-xl text-[10px] leading-relaxed text-white/35"
+              style={{
+                background: "rgba(59,130,246,0.02)",
+                border: "1px solid rgba(59,130,246,0.08)",
+              }}
+            >
+              💡 Be specific about theme, style, and features. Morphix will understand your intent and build accordingly.
             </div>
           </div>
         )}
 
-        {/* 2. References Tab */}
+        {/* ── REFERENCES TAB ── */}
         {activeTab === "references" && (
           <div className="space-y-4">
-            {/* Website URL */}
             <div className="space-y-1.5">
-              <label className="text-[10px] text-white/40 uppercase tracking-widest font-bold flex items-center gap-1.5">
-                <Link2 size={12} />
+              <label className="text-[9px] text-white/35 uppercase tracking-widest font-extrabold flex items-center gap-1.5">
+                <Link2 size={10} />
                 Reference Website URL
               </label>
               <input
@@ -103,70 +200,108 @@ export default function Right({
                 value={projectData.referenceUrl}
                 onChange={(e) => setProjectData({ ...projectData, referenceUrl: e.target.value })}
                 placeholder="https://example.com"
-                className="w-full bg-white/[0.02] border border-white/[0.08] rounded-xl px-3 py-2.5 text-xs text-white placeholder-white/25 focus:outline-none focus:border-blue-500/50 transition-all"
+                className="w-full px-3 py-2.5 text-xs text-white placeholder-white/20 rounded-xl focus:outline-none transition-all"
+                style={{
+                  background: "rgba(255,255,255,0.015)",
+                  border: "1px solid rgba(255,255,255,0.06)",
+                }}
               />
+              {projectData.referenceUrl && (
+                <p className="text-[9px] text-green-400/70 font-semibold">✓ Reference saved</p>
+              )}
             </div>
 
-            {/* Logo Upload */}
             <div className="space-y-1.5">
-              <label className="text-[10px] text-white/40 uppercase tracking-widest font-bold flex items-center gap-1.5">
-                <Upload size={12} />
+              <label className="text-[9px] text-white/35 uppercase tracking-widest font-extrabold flex items-center gap-1.5">
+                <Upload size={10} />
                 Logo Asset
               </label>
-              
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                onChange={handleLogoUpload} 
-                className="hidden" 
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleLogoUpload}
+                className="hidden"
                 accept="image/*"
               />
-              
-              <div 
+              <div
                 onClick={() => fileInputRef.current?.click()}
-                className="border border-dashed border-white/[0.08] rounded-xl p-6 flex flex-col items-center justify-center gap-1.5 bg-white/[0.01] hover:bg-white/[0.02] transition-all cursor-pointer"
+                className="border border-dashed rounded-xl p-5 flex flex-col items-center gap-2 transition-all hover:border-blue-500/30"
+                style={{
+                  borderColor: projectData.logo ? "rgba(52,211,153,0.3)" : "rgba(255,255,255,0.08)",
+                  background: projectData.logo ? "rgba(52,211,153,0.03)" : "rgba(255,255,255,0.01)",
+                  cursor: "pointer",
+                }}
               >
-                <span className="text-lg">📁</span>
-                <span className="text-[11px] font-semibold text-white/50">
+                <span className="text-xl">{projectData.logo ? "✅" : "📁"}</span>
+                <span className="text-[10px] font-bold text-white/45">
                   {projectData.logo ? projectData.logo.name : "Upload Brand Logo"}
                 </span>
-                <span className="text-[9px] text-white/30">SVG, PNG, JPG (Max 2MB)</span>
+                <span className="text-[9px] text-white/20">SVG, PNG, JPG (Max 2MB)</span>
               </div>
             </div>
           </div>
         )}
 
-        {/* 3. Components Tab */}
+        {/* ── COMPONENTS TAB ── */}
         {activeTab === "components" && (
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-[10px] text-white/40 uppercase tracking-widest font-bold">Selected Components</label>
-              <span className="text-[10px] text-blue-400 font-bold bg-blue-500/10 px-2 py-0.5 rounded-full">
+              <label className="text-[9px] text-white/35 uppercase tracking-widest font-extrabold flex items-center gap-1.5">
+                <Layers size={10} />
+                Hint Components
+              </label>
+              <span
+                className="text-[9px] font-bold px-2 py-0.5 rounded-full"
+                style={{
+                  background: "rgba(59,130,246,0.08)",
+                  color: "#93C5FD",
+                  border: "1px solid rgba(59,130,246,0.18)",
+                }}
+              >
                 {projectData.selectedComponents.length} Active
               </span>
             </div>
 
+            <div
+              className="p-3 rounded-xl text-[10px] leading-relaxed text-white/35"
+              style={{ background: "rgba(255,255,255,0.015)", border: "1px solid rgba(255,255,255,0.04)" }}
+            >
+              Hint the AI which components to prefer. Open the{" "}
+              <button
+                className="text-blue-400 font-semibold hover:text-blue-300 transition-colors"
+                style={{ cursor: "pointer", background: "none", border: "none" }}
+                onClick={() => {}}
+              >
+                Library tab
+              </button>{" "}
+              in the Build Panel to browse and add components.
+            </div>
+
             {projectData.selectedComponents.length === 0 ? (
-              <div className="text-center py-8 text-white/25 italic">
-                No custom components selected from build library
+              <div className="text-center py-8 text-white/20 italic text-xs">
+                No components selected yet
               </div>
             ) : (
               <div className="space-y-2">
                 {projectData.selectedComponents.map((c) => (
-                  <div 
-                    key={c} 
-                    className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-between"
+                  <div
+                    key={c}
+                    className="p-2.5 rounded-xl flex items-center justify-between"
+                    style={{
+                      background: "rgba(59,130,246,0.03)",
+                      border: "1px solid rgba(59,130,246,0.12)",
+                    }}
                   >
                     <div className="flex items-center gap-2">
-                      <span className="text-blue-400">✓</span>
-                      <span className="text-xs font-semibold text-white/80">{c}</span>
+                      <CheckCircle size={10} className="text-blue-400" />
+                      <span className="text-xs font-bold text-white/70">{c}</span>
                     </div>
                     <button
                       onClick={() => handleRemoveComponent(c)}
-                      className="text-red-400/70 hover:text-red-400 transition-colors font-bold px-1.5"
-                      style={{ cursor: "pointer" }}
+                      className="text-red-400/50 hover:text-red-400 transition-colors font-bold px-1"
+                      style={{ cursor: "pointer", background: "none", border: "none" }}
                     >
-                      &times;
+                      ×
                     </button>
                   </div>
                 ))}
@@ -175,113 +310,132 @@ export default function Right({
           </div>
         )}
 
-        {/* 4. Project Brief Tab */}
+        {/* ── BRIEF TAB ── */}
         {activeTab === "brief" && (
-          <div className="space-y-4">
-            <label className="text-[10px] text-white/40 uppercase tracking-widest font-bold">Context Summary</label>
-            
-            <div className="border border-white/[0.05] rounded-xl overflow-hidden bg-white/[0.01]">
-              <div className="grid grid-cols-2 border-b border-white/[0.04] p-3">
-                <span className="text-white/45 font-medium">Project Name</span>
-                <span className="text-white/85 text-right font-bold truncate">{projectData.projectName}</span>
-              </div>
-              <div className="grid grid-cols-2 border-b border-white/[0.04] p-3">
-                <span className="text-white/45 font-medium">Website Type</span>
-                <span className="text-white/85 text-right font-bold">{projectData.websiteType}</span>
-              </div>
-              <div className="grid grid-cols-2 border-b border-white/[0.04] p-3">
-                <span className="text-white/45 font-medium">Prompt Input</span>
-                <span className="text-white/85 text-right font-bold">
-                  {projectData.prompt ? "Configured ✓" : "Empty ✗"}
-                </span>
-              </div>
-              <div className="grid grid-cols-2 border-b border-white/[0.04] p-3">
-                <span className="text-white/45 font-medium">Reference URL</span>
-                <span className="text-white/85 text-right font-bold">
-                  {projectData.referenceUrl ? "Configured ✓" : "Empty ✗"}
-                </span>
-              </div>
-              <div className="grid grid-cols-2 border-b border-white/[0.04] p-3">
-                <span className="text-white/45 font-medium">Logo Attached</span>
-                <span className="text-white/85 text-right font-bold">
-                  {projectData.logo ? "Configured ✓" : "Empty ✗"}
-                </span>
-              </div>
-              <div className="grid grid-cols-2 p-3">
-                <span className="text-white/45 font-medium">Selected Lib</span>
-                <span className="text-white/85 text-right font-bold">
-                  {projectData.selectedComponents.length} component(s)
-                </span>
-              </div>
+          <div className="space-y-3">
+            <label className="text-[9px] text-white/35 uppercase tracking-widest font-bold">
+              Project Summary
+            </label>
+
+            <div
+              className="rounded-xl overflow-hidden"
+              style={{ border: "1px solid rgba(255, 255, 255, 0.04)" }}
+            >
+              {[
+                ["Project Name", projectData.projectName || "—"],
+                ["Website Type", projectData.websiteType],
+                ["Prompt", projectData.prompt ? "✓ Configured" : "✗ Empty"],
+                ["Reference URL", projectData.referenceUrl ? "✓ Configured" : "✗ Empty"],
+                ["Logo", projectData.logo ? `✓ ${projectData.logo.name}` : "✗ None"],
+                ["Components", `${projectData.selectedComponents.length} selected`],
+              ].map(([key, val], i, arr) => (
+                <div
+                  key={key}
+                  className="grid grid-cols-2 px-3 py-2.5"
+                  style={{
+                    borderBottom: i < arr.length - 1 ? "1px solid rgba(255,255,255,0.03)" : "none",
+                    background: i % 2 === 0 ? "rgba(255,255,255,0.005)" : "transparent",
+                  }}
+                >
+                  <span className="text-white/40 font-medium text-[10px]">{key}</span>
+                  <span
+                    className="text-right font-bold text-[10px] truncate"
+                    style={{ color: val?.startsWith("✓") ? "#34D399" : val?.startsWith("✗") ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.7)" }}
+                  >
+                    {val}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── Bottom Action Area ── */}
+      <div
+        className="p-4 border-t border-white/[0.04] space-y-3 flex-shrink-0"
+        style={{ background: "rgba(0,0,0,0.15)" }}
+      >
+        {/* Completed stats */}
+        {isCompleted && (
+          <div
+            className="p-3 rounded-xl space-y-1.5"
+            style={{
+              background: "rgba(52,211,153,0.03)",
+              border: "1px solid rgba(52,211,153,0.12)",
+            }}
+          >
+            <div className="flex items-center gap-2">
+              <CheckCircle size={12} className="text-[#34D399]" />
+              <span className="text-[10px] font-bold text-[#34D399]">Version 1 Ready</span>
+            </div>
+            <div className="flex items-center justify-between text-[9px] text-white/35">
+              <span className="flex items-center gap-1"><Layers size={8} /> {sectionsCount} Sections</span>
+              <span className="flex items-center gap-1"><Clock size={8} /> {timeTaken}s</span>
             </div>
           </div>
         )}
 
-      </div>
+        {/* Generate Again / Generate button */}
+        {isCompleted && (
+          <button
+            onClick={onGenerateAgain}
+            className="w-full py-2.5 rounded-xl text-[10px] font-extrabold transition-all hover:-translate-y-0.5 active:translate-y-0 text-white border btn-premium-shimmer"
+            style={{
+              background: "linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)",
+              borderColor: "rgba(255,255,255,0.12)",
+              boxShadow: "0 4px 20px rgba(59, 130, 246, 0.45), inset 0 1px 0 rgba(255,255,255,0.2)",
+              cursor: "pointer",
+            }}
+          >
+            <RefreshCw size={10} className="inline mr-1.5 animate-spin" style={{ animationDuration: "3s" }} />
+            Generate Again
+          </button>
+        )}
+        {!isCompleted && (
+          <button
+            onClick={onGenerate}
+            disabled={!canGenerate}
+            className="w-full py-3 rounded-xl text-[10px] font-bold text-white transition-all flex items-center justify-center gap-2 disabled:opacity-40 hover:-translate-y-0.5 active:translate-y-0"
+            style={{
+              background: canGenerate
+                ? "linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%)"
+                : "rgba(255,255,255,0.03)",
+              boxShadow: canGenerate ? "0 4px 18px rgba(59,130,246,0.25)" : "none",
+              border: canGenerate
+                ? "1px solid rgba(59,130,246,0.35)"
+                : "1px solid rgba(255,255,255,0.05)",
+              cursor: canGenerate ? "pointer" : "not-allowed",
+            }}
+          >
+            {isGenerating ? (
+              <>
+                <span
+                  className="w-2.5 h-2.5 border-2 border-t-transparent rounded-full animate-spin"
+                  style={{ borderColor: "rgba(255,255,255,0.5)", borderTopColor: "transparent" }}
+                />
+                <span>AI Generating...</span>
+              </>
+            ) : isError ? (
+              <>
+                <Sparkles size={11} />
+                <span>Retry Generation</span>
+              </>
+            ) : (
+              <>
+                <Sparkles size={11} />
+                <span>Generate Website</span>
+              </>
+            )}
+          </button>
+        )}
 
-      {/* Generate Website Action Button (Color-changes to purple when completed) */}
-      <div className="p-4 border-t border-white/[0.06] bg-black/35 z-20">
-        <button
-          onClick={onGenerate}
-          disabled={generationStatus === "generating" || !projectData.prompt.trim()}
-          className="w-full py-3.5 rounded-xl text-xs font-bold text-white transition-all flex items-center justify-center gap-2 disabled:opacity-40 hover:scale-[1.01] active:scale-[0.99]"
-          style={{
-            background: (generationStatus === "generating" || !projectData.prompt.trim())
-              ? "rgba(255, 255, 255, 0.05)"
-              : isCompleted
-                ? "linear-gradient(135deg, #6d28d9 0%, #8b5cf6 100%)" // Purple/violet edit theme
-                : "linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%)", // Blue creation theme
-            boxShadow: (generationStatus === "generating" || !projectData.prompt.trim())
-              ? "none"
-              : isCompleted
-                ? "0 4px 18px rgba(139, 92, 246, 0.35)"
-                : "0 4px 18px rgba(59, 130, 246, 0.35)",
-            cursor: (generationStatus === "generating" || !projectData.prompt.trim()) ? "default" : "pointer",
-            border: (generationStatus === "generating" || !projectData.prompt.trim())
-              ? "1px solid rgba(255,255,255,0.05)"
-              : isCompleted
-                ? "1px solid rgba(139, 92, 246, 0.45)"
-                : "1px solid rgba(59, 130, 246, 0.45)"
-          }}
-        >
-          {generationStatus === "generating" ? (
-            <Loader2 size={14} className="animate-spin text-blue-400" />
-          ) : isCompleted ? (
-            <RefreshCw size={14} className="text-purple-300" />
-          ) : (
-            <Sparkles size={14} className="text-blue-300" />
-          )}
-          <span>
-            {generationStatus === "generating" 
-              ? "AI Generating..." 
-              : isCompleted 
-                ? "Upgrade Website" 
-                : "Generate Website"
-            }
-          </span>
-        </button>
+        {isIdle && !projectData.prompt.trim() && (
+          <p className="text-center text-[8px] text-white/20 uppercase tracking-widest font-bold">
+            Enter prompt above
+          </p>
+        )}
       </div>
     </aside>
-  );
-}
-
-// Custom Loader2 SVG Icon helper
-function Loader2(props: React.SVGProps<SVGSVGElement> & { size?: number }) {
-  const size = props.size || 24;
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-    </svg>
   );
 }

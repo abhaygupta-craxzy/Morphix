@@ -1,0 +1,33 @@
+{
+  "props": {
+    "sectionTitle": {
+      "type": "string",
+      "description": "Section heading above the feature cards",
+      "default": "Why Choose Us"
+    },
+    "sectionSubtitle": {
+      "type": "string",
+      "description": "Short subtitle below the section title",
+      "default": "Everything you need to succeed"
+    },
+    "features": {
+      "type": "array",
+      "description": "List of feature objects. Each has icon (emoji), title, and description.",
+      "default": [
+        { "icon": "⚡", "title": "Lightning Fast", "description": "Optimized for speed and performance." },
+        { "icon": "🔒", "title": "Secure by Default", "description": "Enterprise-grade security built in." },
+        { "icon": "🌐", "title": "Global Scale", "description": "Deploy anywhere in the world instantly." }
+      ]
+    },
+    "primaryColor": {
+      "type": "string",
+      "description": "Accent color for card borders and icons",
+      "default": "#3B82F6"
+    },
+    "bgColor": {
+      "type": "string",
+      "description": "Section background color",
+      "default": "#070b15"
+    }
+  }
+}

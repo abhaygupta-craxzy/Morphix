@@ -1,0 +1,10 @@
+{
+  "id": "hero_001",
+  "name": "Gradient Hero Section",
+  "category": "hero",
+  "style": ["Dark", "Gradient", "Modern", "Bold"],
+  "industries": ["SaaS", "E-commerce", "Marketplace", "Portfolio"],
+  "tags": ["headline", "subheadline", "cta", "badge", "glow", "gradient"],
+  "description": "Full-width hero with a badge label, large headline, subheadline, dual CTA buttons, and a radial glow background accent.",
+  "supports": ["Badge", "Headline", "Subheadline", "Primary CTA", "Secondary CTA", "Background Glow"]
+}

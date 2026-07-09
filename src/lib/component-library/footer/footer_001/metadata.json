@@ -1,0 +1,10 @@
+{
+  "id": "footer_001",
+  "name": "Dark Footer",
+  "category": "footer",
+  "style": ["Dark", "Minimal", "Clean"],
+  "industries": ["SaaS", "E-commerce", "Marketplace", "Portfolio", "Landing Page"],
+  "tags": ["footer", "links", "copyright", "columns", "social"],
+  "description": "A clean dark footer with brand name, tagline, multi-column link groups, and a copyright line at the bottom.",
+  "supports": ["Brand Name", "Tagline", "Link Columns", "Copyright", "Social Links"]
+}

@@ -1,0 +1,10 @@
+{
+  "id": "pricing_001",
+  "name": "Pricing Cards",
+  "category": "pricing",
+  "style": ["Dark", "Card", "Modern", "Clean"],
+  "industries": ["SaaS", "Subscription", "Product", "Agency"],
+  "tags": ["pricing", "plans", "cards", "highlighted", "features list"],
+  "description": "2–3 pricing plan cards with plan name, price, period, feature bullet list, and a CTA button. Middle card highlighted as recommended.",
+  "supports": ["Plans Array", "Price", "Period", "Features List", "CTA", "Highlight Card"]
+}

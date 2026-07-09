@@ -628,3 +628,75 @@ html, body {
   100% { left: 110%; }
 }
 
+/* ════════════════════════════════════════════
+   CREATE STUDIO — CANVAS ANIMATIONS
+════════════════════════════════════════════ */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.45s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Premium Button Shimmer & Spotlight Animations */
+@keyframes completePulse {
+  0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.2); }
+  70% { box-shadow: 0 0 0 8px rgba(52, 211, 153, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+}
+
+.animate-complete-pulse {
+  animation: completePulse 2.5s infinite ease-in-out;
+}
+
+.btn-premium-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-premium-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  transform: skewX(-20deg);
+  animation: shimmerScan 3.5s infinite linear;
+}
+
+.btn-purple-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-purple-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transform: skewX(-20deg);
+  animation: shimmerScan 2.5s infinite linear;
+}

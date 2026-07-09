@@ -1,0 +1,10 @@
+{
+  "id": "features_001",
+  "name": "Feature Cards Grid",
+  "category": "features",
+  "style": ["Dark", "Card", "Grid", "Modern"],
+  "industries": ["SaaS", "Product", "Marketplace", "Agency"],
+  "tags": ["grid", "cards", "icons", "3-column", "features"],
+  "description": "A responsive 3-column grid of feature cards with icon, title, and description. Supports 3 to 6 feature items.",
+  "supports": ["Section Title", "Feature Cards", "Icon Emoji", "Card Description"]
+}

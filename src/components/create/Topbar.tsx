@@ -2,14 +2,16 @@
 
 import React from "react";
 import Link from "next/link";
-import { 
-  Play, 
-  Pause, 
-  X, 
-  Layout, 
-  ArrowLeft, 
+import {
+  X,
+  Layout,
+  ArrowLeft,
   Menu,
-  Activity
+  Activity,
+  CheckCircle,
+  AlertCircle,
+  Zap,
+  Download,
 } from "lucide-react";
 import { GenerationStatus } from "@/app/create/page";
 
@@ -17,168 +19,180 @@ interface TopbarProps {
   projectName: string;
   generationStatus: GenerationStatus;
   activeSection: string;
-  sectionPercent: number;
-  estimatedSecs: number;
-  onPause: () => void;
-  onResume: () => void;
+  timeTaken: number;
   onCancel: () => void;
+  onExport: () => void;
 }
 
 export default function Topbar({
   projectName,
   generationStatus,
   activeSection,
-  sectionPercent,
-  estimatedSecs,
-  onPause,
-  onResume,
+  timeTaken,
   onCancel,
+  onExport,
 }: TopbarProps) {
+  const isGenerating = generationStatus === "generating";
+  const isCompleted = generationStatus === "completed";
+  const isPaused = generationStatus === "paused";
+  const isError = generationStatus === "error";
+  const isIdle = generationStatus === "idle";
+
+  const statusColor = isGenerating
+    ? "#93C5FD"
+    : isCompleted
+    ? "#34D399"
+    : isPaused
+    ? "#F59E0B"
+    : isError
+    ? "#F87171"
+    : "rgba(255,255,255,0.3)";
+
+  const statusBorder = isGenerating
+    ? "rgba(59,130,246,0.3)"
+    : isCompleted
+    ? "rgba(52,211,153,0.25)"
+    : isPaused
+    ? "rgba(245,158,11,0.25)"
+    : isError
+    ? "rgba(248,113,113,0.25)"
+    : "rgba(255,255,255,0.08)";
+
+  const statusBg = isGenerating
+    ? "rgba(59,130,246,0.05)"
+    : isCompleted
+    ? "rgba(52,211,153,0.05)"
+    : isPaused
+    ? "rgba(245,158,11,0.05)"
+    : isError
+    ? "rgba(248,113,113,0.05)"
+    : "rgba(255,255,255,0.02)";
+
   return (
     <header
-      className="flex items-center justify-between px-6 border-b z-30 relative"
+      className="flex items-center justify-between px-5 z-30 relative flex-shrink-0"
       style={{
-        height: 64,
-        background: "#080d1e",
-        borderColor: "rgba(255, 255, 255, 0.06)",
+        height: 52,
+        background: "rgba(8, 13, 30, 0.4)",
+        borderBottom: "1px solid rgba(255, 255, 255, 0.03)",
         backdropFilter: "blur(12px)",
         WebkitBackdropFilter: "blur(12px)",
       }}
     >
-      {/* Left side: Hamburger menu & Back button */}
-      <div className="flex items-center gap-4">
-        <button 
-          className="p-1.5 rounded-lg hover:bg-white/[0.05] border border-transparent hover:border-white/[0.08] transition-all text-white/60 hover:text-white"
+      {/* Left: Nav */}
+      <div className="flex items-center gap-3">
+        <button
+          className="p-2 rounded-xl text-white/70 hover:text-white hover:bg-white/[0.04] border border-white/[0.04] transition-all"
           style={{ cursor: "pointer" }}
         >
-          <Menu size={18} />
+          <Menu size={15} />
         </button>
 
         <Link
           href="/home"
-          className="flex items-center gap-2 text-xs font-semibold text-white/60 hover:text-white bg-white/[0.03] border border-white/[0.06] rounded-xl px-3.5 py-2 transition-all hover:bg-white/[0.06]"
+          className="flex items-center gap-1.5 text-[11px] font-bold text-white/80 hover:text-white px-3.5 py-2 rounded-xl border transition-all hover:border-white/[0.12] hover:bg-white/[0.04]"
+          style={{
+            background: "rgba(255,255,255,0.025)",
+            borderColor: "rgba(255,255,255,0.06)",
+          }}
         >
-          <ArrowLeft size={13} />
-          <span>Dashboard</span>
+          <ArrowLeft size={11} className="text-white/60" />
+          Dashboard
         </Link>
 
-        <div className="h-4 w-px bg-white/[0.08] mx-1" />
+        <div className="h-4 w-px bg-white/[0.08]" />
 
         <div className="flex flex-col">
-          <span className="text-[10px] text-white/30 uppercase tracking-widest font-semibold">Active Blueprint</span>
-          <span className="text-sm font-bold text-white tracking-tight">{projectName}</span>
+          <span className="text-[8px] text-white/20 uppercase tracking-widest font-bold">
+            Active Blueprint
+          </span>
+          <span className="text-xs font-bold text-white tracking-tight leading-none mt-0.5">
+            {projectName}
+          </span>
         </div>
       </div>
 
-      {/* Middle: Alive Progress & Percentage Status */}
-      <div className="flex items-center gap-3">
-        <div 
-          className="flex items-center gap-3 px-4 py-2 rounded-full border transition-all duration-300"
-          style={{
-            background: "rgba(59, 130, 246, 0.03)",
-            borderColor: generationStatus === "generating" 
-              ? "rgba(59, 130, 246, 0.25)" 
-              : generationStatus === "paused"
-                ? "rgba(245, 158, 11, 0.25)"
-                : "rgba(16, 185, 129, 0.25)",
-          }}
+      {/* Center: Status pill */}
+      <div className="flex items-center gap-2.5">
+        <div
+          className="flex items-center gap-2 px-3 py-1 rounded-full border transition-all duration-300"
+          style={{ background: statusBg, borderColor: statusBorder }}
         >
-          {generationStatus === "generating" && (
-            <Activity size={13} className="text-blue-400 animate-pulse" />
-          )}
-          
-          <div className="flex flex-col text-left">
-            <span 
-              className="text-xs font-bold tracking-wide uppercase"
-              style={{
-                color: generationStatus === "generating"
-                  ? "#93C5FD"
-                  : generationStatus === "paused"
-                    ? "#F59E0B"
-                    : generationStatus === "completed"
-                      ? "#34D399"
-                      : "rgba(255, 255, 255, 0.4)",
-              }}
-            >
-              {generationStatus === "generating" && `Building ${activeSection}... ${sectionPercent}%`}
-              {generationStatus === "paused" && "Generation Paused"}
-              {generationStatus === "completed" && "Website Generated!"}
-              {generationStatus === "idle" && "Idle"}
-            </span>
+          {/* Icon */}
+          {isGenerating && <Activity size={10} className="animate-pulse" style={{ color: statusColor }} />}
+          {isCompleted && <CheckCircle size={10} style={{ color: statusColor }} />}
+          {isError && <AlertCircle size={10} style={{ color: statusColor }} />}
+          {isIdle && <Zap size={10} style={{ color: statusColor }} />}
 
-            {generationStatus === "generating" && (
-              <span className="text-[9px] text-white/35 font-medium tracking-wide">
-                Estimated {estimatedSecs}s remaining
-              </span>
-            )}
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold tracking-wide" style={{ color: statusColor }}>
+              {isGenerating && `Building ${activeSection}...`}
+              {isCompleted && `Done · ${timeTaken}s`}
+              {isPaused && "Generation Paused"}
+              {isError && "Generation Failed"}
+              {isIdle && "Idle"}
+            </span>
           </div>
 
-          {generationStatus === "generating" && (
-            <span className="flex h-2 w-2 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+          {/* Live ping dot */}
+          {isGenerating && (
+            <span className="flex h-1.5 w-1.5 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-500" />
             </span>
           )}
         </div>
 
-        {/* Play/Pause/Cancel controls */}
-        {generationStatus !== "completed" && generationStatus !== "idle" && (
-          <div className="flex items-center gap-1.5 bg-white/[0.02] border border-white/[0.06] p-1 rounded-xl">
-            {generationStatus === "generating" ? (
-              <button
-                onClick={onPause}
-                title="Pause Architect"
-                className="p-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/[0.05] transition-all"
-                style={{ cursor: "pointer" }}
-              >
-                <Pause size={14} fill="currentColor" />
-              </button>
-            ) : (
-              <button
-                onClick={onResume}
-                title="Resume Architect"
-                className="p-1.5 rounded-lg text-blue-400 hover:text-blue-300 hover:bg-white/[0.05] transition-all animate-pulse"
-                style={{ cursor: "pointer" }}
-              >
-                <Play size={14} fill="currentColor" />
-              </button>
-            )}
-
-            <button
-              onClick={onCancel}
-              title="Cancel Generation"
-              className="p-1.5 rounded-lg text-red-400/70 hover:text-red-400 hover:bg-red-500/10 transition-all"
-              style={{ cursor: "pointer" }}
-            >
-              <X size={14} />
-            </button>
-          </div>
+        {/* Cancel */}
+        {isGenerating && (
+          <button
+            onClick={onCancel}
+            title="Cancel Generation"
+            className="p-1.5 rounded-lg text-red-400/60 hover:text-red-400 hover:bg-red-500/10 transition-all"
+            style={{ cursor: "pointer", background: "none", border: "none" }}
+          >
+            <X size={13} />
+          </button>
         )}
       </div>
 
-      {/* Right side: Open Workspace button */}
-      <div className="flex items-center gap-3">
+      {/* Right: Workspace + Export */}
+      <div className="flex items-center gap-2">
+        {/* Export Code button — only visible when completed */}
+        {isCompleted && (
+          <button
+            onClick={onExport}
+            className="flex items-center gap-1.5 text-[11px] font-bold px-3.5 py-2 rounded-xl transition-all"
+            style={{
+              background: "rgba(99,102,241,0.12)",
+              border: "1px solid rgba(99,102,241,0.35)",
+              color: "#a5b4fc",
+              cursor: "pointer",
+              boxShadow: "0 2px 12px rgba(99,102,241,0.2)",
+            }}
+          >
+            <Download size={12} />
+            Export Code
+          </button>
+        )}
+
         <Link
-          href={generationStatus === "completed" ? "/home" : "#"}
-          className={`flex items-center gap-2 text-xs font-bold px-4 py-2.5 rounded-xl transition-all ${
-            generationStatus === "completed"
-              ? "text-white hover:scale-[1.02] active:scale-[0.98]"
-              : "text-white/20 pointer-events-none"
-          }`}
+          href={isCompleted ? "/home" : "#"}
+          className="flex items-center gap-1.5 text-[11px] font-bold px-4 py-2 rounded-xl transition-all btn-purple-shimmer"
           style={{
-            background: generationStatus === "completed"
-              ? "linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%)"
-              : "rgba(255, 255, 255, 0.03)",
-            border: generationStatus === "completed"
-              ? "1px solid rgba(59, 130, 246, 0.45)"
-              : "1px solid rgba(255, 255, 255, 0.05)",
-            boxShadow: generationStatus === "completed"
-              ? "0 4px 16px rgba(59, 130, 246, 0.3)"
-              : "none",
+            background: isCompleted
+              ? "linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)"
+              : "rgba(255,255,255,0.015)",
+            border: isCompleted
+              ? "1px solid rgba(168,85,247,0.45)"
+              : "1px solid rgba(255,255,255,0.04)",
+            color: isCompleted ? "#fff" : "rgba(255,255,255,0.18)",
+            pointerEvents: isCompleted ? "auto" : "none",
+            boxShadow: isCompleted ? "0 4px 18px rgba(168,85,247,0.35), inset 0 1px 0 rgba(255,255,255,0.1)" : "none",
           }}
         >
-          <Layout size={14} />
-          <span>Open Workspace</span>
+          <Layout size={12} />
+          Open Workspace
         </Link>
       </div>
     </header>

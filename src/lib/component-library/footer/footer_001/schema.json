@@ -1,0 +1,38 @@
+{
+  "props": {
+    "brandName": {
+      "type": "string",
+      "description": "Company / brand name shown in footer",
+      "default": "Brand"
+    },
+    "tagline": {
+      "type": "string",
+      "description": "Short brand tagline",
+      "default": "Building the future, together."
+    },
+    "linkColumns": {
+      "type": "array",
+      "description": "Array of column objects with heading and links[] array",
+      "default": [
+        { "heading": "Product", "links": ["Features", "Pricing", "Changelog"] },
+        { "heading": "Company", "links": ["About", "Blog", "Careers"] },
+        { "heading": "Legal", "links": ["Privacy", "Terms", "Security"] }
+      ]
+    },
+    "copyright": {
+      "type": "string",
+      "description": "Copyright line (use {{YEAR}} for dynamic year)",
+      "default": "© {{YEAR}} Brand Inc. All rights reserved."
+    },
+    "primaryColor": {
+      "type": "string",
+      "description": "Accent color for hover states",
+      "default": "#3B82F6"
+    },
+    "bgColor": {
+      "type": "string",
+      "description": "Footer background color",
+      "default": "#050813"
+    }
+  }
+}

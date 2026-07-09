@@ -1,0 +1,10 @@
+{
+  "id": "navbar_001",
+  "name": "Modern Dark Navbar",
+  "category": "navbar",
+  "style": ["Dark", "Modern", "Minimal"],
+  "industries": ["SaaS", "E-commerce", "Portfolio", "Landing Page"],
+  "tags": ["sticky", "search", "cart", "logo", "responsive"],
+  "description": "A sleek dark navbar with logo, navigation links, optional search, and a CTA button. Glassmorphism variant available.",
+  "supports": ["Logo", "Links", "Search", "Cart", "CTA Button", "Transparent Mode"]
+}

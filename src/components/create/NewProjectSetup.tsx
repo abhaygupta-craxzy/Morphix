@@ -528,7 +528,7 @@ export default function NewProjectSetup({ onCreate }: NewProjectSetupProps) {
                   onKeyDown={(event) => {
                     if (event.key === "Enter") submitProject();
                   }}
-                  placeholder="My Startup Website"
+                  placeholder="Name Your Website"
                   autoComplete="off"
                   className={styles.nameInput}
                 />

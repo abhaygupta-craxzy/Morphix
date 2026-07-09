@@ -1,0 +1,41 @@
+{
+  "props": {
+    "logo": {
+      "type": "string",
+      "description": "Brand name or logo text",
+      "default": "Brand"
+    },
+    "links": {
+      "type": "array",
+      "items": "string",
+      "description": "Navigation link labels",
+      "default": ["Home", "Features", "Pricing", "About"]
+    },
+    "ctaText": {
+      "type": "string",
+      "description": "Call-to-action button label",
+      "default": "Get Started"
+    },
+    "showSearch": {
+      "type": "boolean",
+      "description": "Show search icon in navbar",
+      "default": false
+    },
+    "showCart": {
+      "type": "boolean",
+      "description": "Show shopping cart icon",
+      "default": false
+    },
+    "theme": {
+      "type": "string",
+      "enum": ["dark", "glass", "light"],
+      "description": "Visual theme of the navbar",
+      "default": "dark"
+    },
+    "primaryColor": {
+      "type": "string",
+      "description": "Accent / CTA button color (hex)",
+      "default": "#3B82F6"
+    }
+  }
+}

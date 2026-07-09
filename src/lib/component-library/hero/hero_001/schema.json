@@ -1,0 +1,39 @@
+{
+  "props": {
+    "badge": {
+      "type": "string",
+      "description": "Small badge label above the headline (e.g. 'Now in Beta', 'New Release')",
+      "default": ""
+    },
+    "headline": {
+      "type": "string",
+      "description": "Main hero headline (keep under 8 words for impact)",
+      "default": "Build Something Amazing"
+    },
+    "subheadline": {
+      "type": "string",
+      "description": "Supporting description below the headline (1-2 sentences)",
+      "default": "The fastest way to create stunning websites powered by AI."
+    },
+    "primaryCta": {
+      "type": "string",
+      "description": "Primary call-to-action button text",
+      "default": "Get Started Free"
+    },
+    "secondaryCta": {
+      "type": "string",
+      "description": "Secondary CTA button text (optional)",
+      "default": "See Demo"
+    },
+    "primaryColor": {
+      "type": "string",
+      "description": "Primary accent color (hex)",
+      "default": "#3B82F6"
+    },
+    "bgColor": {
+      "type": "string",
+      "description": "Background color (hex)",
+      "default": "#050813"
+    }
+  }
+}

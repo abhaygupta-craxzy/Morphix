@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,sans-serif;background:{{BG_COLOR}};color:#fff;}
+  .pricing{padding:80px 32px;}
+  .section-header{text-align:center;margin-bottom:48px;}
+  .section-header h2{font-size:36px;font-weight:800;letter-spacing:-1px;}
+  .section-header p{margin-top:12px;font-size:15px;color:rgba(255,255,255,0.5);max-width:400px;margin-left:auto;margin-right:auto;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;max-width:960px;margin:0 auto;}
+  .card{
+    padding:32px 28px;border-radius:18px;
+    background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.08);
+    position:relative;transition:all 0.3s;
+  }
+  .card.highlighted{
+    background:{{PRIMARY_COLOR}}0d;border-color:{{PRIMARY_COLOR}}50;
+    box-shadow:0 0 40px {{PRIMARY_COLOR}}20;
+  }
+  .recommended{
+    position:absolute;top:-12px;left:50%;transform:translateX(-50%);
+    background:{{PRIMARY_COLOR}};color:#fff;font-size:10px;font-weight:800;
+    padding:4px 14px;border-radius:100px;letter-spacing:0.5px;text-transform:uppercase;white-space:nowrap;
+  }
+  .plan-name{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.55);}
+  .price-row{display:flex;align-items:baseline;gap:4px;margin:16px 0 8px;}
+  .price{font-size:42px;font-weight:900;color:#fff;letter-spacing:-2px;}
+  .period{font-size:14px;color:rgba(255,255,255,0.4);font-weight:500;}
+  .divider{height:1px;background:rgba(255,255,255,0.07);margin:20px 0;}
+  .feature-list{list-style:none;space-y:8px;}
+  .feature-list li{
+    font-size:13px;color:rgba(255,255,255,0.6);padding:5px 0;
+    display:flex;align-items:center;gap:8px;
+  }
+  .feature-list li::before{content:'✓';color:{{PRIMARY_COLOR}};font-weight:800;font-size:12px;}
+  .cta-btn{
+    width:100%;margin-top:24px;padding:12px;border-radius:10px;
+    font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;border:none;
+  }
+  .card.highlighted .cta-btn{background:{{PRIMARY_COLOR}};color:#fff;box-shadow:0 4px 16px {{PRIMARY_COLOR}}50;}
+  .card:not(.highlighted) .cta-btn{background:rgba(255,255,255,0.06);color:#fff;border:1px solid rgba(255,255,255,0.12);}
+  .cta-btn:hover{opacity:0.88;transform:translateY(-1px);}
+</style>
+</head>
+<body>
+<section class="pricing">
+  <div class="section-header">
+    <h2>{{SECTION_TITLE}}</h2>
+    <p>{{SECTION_SUBTITLE}}</p>
+  </div>
+  <div class="grid">
+    {{PRICING_CARDS}}
+  </div>
+</section>
+</body>
+</html>
